@@ -1,0 +1,14 @@
+[Unit]
+Description=Consigue guia via El País
+After=syslog.target network.target
+
+[Service]
+Type=simple
+PIDFile=/run/tvhelpais.pid
+ExecStart=/bin/bash /home/hts/tvhelpais/tvhelpais.sh
+ExecStop=/bin/rm /run/tvhelpais.pid
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
