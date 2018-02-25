@@ -15,6 +15,7 @@ import CadenasHOME_din from './cadenasHOME_din';
 
 import fs from 'fs';
 import rp from 'request-promise';
+import path from 'path';
 
 
 // Timers
@@ -74,9 +75,10 @@ let progPreferences = {
 	// En resumen:   JSON(elpais)->JSON_UNIFICADO(elpais)->JSON(xmltv)->XML(xmltv)
 	//
 	// Ficheros temporales
-	ficheroJsonINDEX: '/tmp/guia.elpais_',
-	ficheroJSON: '/tmp/guia.elpais-xml.json',
-	ficheroJSONTV: '/tmp/guia.elpais-xmltv.json',
+	rutaFicheros : '/tmp',
+	ficheroJsonINDEX: 'guia.elpais_',
+	ficheroJSON: 'guia.elpais-xml.json',
+	ficheroJSONTV: 'guia.elpais-xmltv.json',
 	//
 	// Fichero final:
 	ficheroXMLTV: '/home/hts/guia/guiaelpais.xml',
@@ -142,6 +144,7 @@ function comparaCadenasString(a,b) {
 	return 1;
 	return 0;
 }
+
 function comparaCadenasInteger(a,b) {
 	let aNum=Number(a.elpais_numero);
 	let bNum=Number(b.elpais_numero);
@@ -177,194 +180,220 @@ function creaFicheroM3U (cadenas, cadenas_din, ficheroM3U) {
 		}
 	});
 	wstream.end();
-
 }
 
-// =========================================================
-// Método principal
-// =========================================================
-
-function sessionController() {
-
-	let generaM3u = false;
-
-	// Paro mi propio timer, lo re-programaré más tarde
-	clearInterval(timerSessionController);
-
-	// Genero array con los canales a descargar
-	let arrayCadenas = [];
-	progPreferences.cadenasHOME.map(cadena => {
-		if (cadena.elpais_epg) {
-			arrayCadenas.push(cadena.elpais_id)
-		}
-		if (cadena.tvh_m3u){
-			generaM3u = true;
-		}
-	});
-
-
-	// M3U cadenasHOME :
-	if (generaM3u){
-		creaFicheroM3U(progPreferences.cadenasHOME, progPreferences.cadenasHOME_din, progPreferences.ficheroM3U_HOME);
-	}
-
-	// XMLTV:
-	//
-	// Calculo cuando tendré que hacer la proxima solicitud
-	let ahora = new Date();
-	progPreferences.dias = Utils.validaDias(progPreferences.dias);
-	progPreferences.diasInicioFin = Utils.fechaInicioFin(progPreferences.dias);
-	progPreferences.nextRunDate = Utils.horaAleatoriaTomorrow(progPreferences.horaInicio, progPreferences.horaFin);
-	progPreferences.nextRunMilisegundos = progPreferences.nextRunDate - ahora;
-	if (progPreferences.nextRunMilisegundos < 0) {
-		progPreferences.nextRunMilisegundos += 86400000; // dentro de 24h si algo falla
-	}
-
-	// Inicio el proceso pidiendo el EPG a elpais
-	console.log('--');
-	console.log(`Inicio del ciclo de consulta del EPG`);
-	console.log('---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ');
-	if (progPreferences.developerMode === false) {
-		console.log(`1 - Descargando el EPG en formato JSON desde El País`);
-		console.log(`  => PORT ${progPreferences.urlelpais}`);
-		console.log(`  => EPG Descargando información para ${progPreferences.dias} días`);
-
-		let urls = [];
-		let files = [];
-
-		// Creo el array con la url y fichero de destino de los indices
-		for (let i = 0; i < progPreferences.dias; i++) {
-			urls.push(progPreferences.urlelpais + 'parrilla_' + Utils.nextDay(i) + '.json');
-			files.push(progPreferences.ficheroJsonINDEX + Utils.nextDay(i) + '.json');
-		}
-
-		// Creo el array con la url y fichero de destino de los canales
-		for (let i = 0; i < arrayCadenas.length; i++) {
-
-			urls.push(progPreferences.urlprogramas + arrayCadenas[i] + '.json');
-			files.push(progPreferences.ficheroJsonINDEX + arrayCadenas[i] + '.json');
-		}
-
-		const promises = urls.map(url => rp(url));
-		Promise.all(promises)
-		.then((data) => {
-
-			var promises = [];
-			for (let i = 0; i < data.length; i++) {
-				promises.push(Promise.resolve(
-				new Promise(function(resolve, reject) {
-					fs.writeFile(files[i], data[i], function(error){
-						if (error) {
-							console.log(`    => Error escribiendo el fichero ${files[i]}`);
-							reject(error);
-						}
-						else {
-							console.log(`    => El fichero ${files[i]} se ha salvado correctamente`);
-							resolve();
-						}
-					});
-				}
-				)));
+function rmDir (dirPath, removeSelf) {
+	if (removeSelf === undefined)
+	removeSelf = true;
+	try { var files = fs.readdirSync(dirPath); }
+	catch(e) { return; }
+	if (files.length > 0)
+	for (var i = 0; i < files.length; i++) {
+		//var filePath = dirPath + '/' + files[i];
+		var filePath = path.join(dirPath, files[i]);
+		if (filePath.indexOf("guia.elpais") !== -1) {
+			if (fs.statSync(filePath).isFile())
+			fs.unlinkSync(filePath);
+			else
+				rmDir(filePath);
 			}
-			Promise.all(promises).then(function() {
-				conversionCompletaDeEPGaXMLTV();
-			});
-		});
-	} else {
-		conversionCompletaDeEPGaXMLTV();
-	}
-}
-
-// Postprocesa los datos descargados
-function conversionCompletaDeEPGaXMLTV() {
-	progPreferences.isConversionRunning = true;
-	console.log(`1 - Descargando el EPG en formato JSON desde El País - Completado`);
-
-	// Convierto los datos del indice y los detalles de los programas en formato JSON (El Pais) a un único fichero JSON (xmltv)
-	console.log(`2 - Convierte JSON (El País) a JSONTV`);
-	//let datosJSONTV = Utils.convierteJSONaJSONTV(progPreferences, ficheroJsonINDEX);
-	Utils.convierteJSONaJSONTV(progPreferences);
-	console.log(`4 - Salvando JSON unificado de El País ${progPreferences.ficheroJSON} - Completado`);
-	console.log(`5 - Convirtiendo JSON (El Pais) a JSONTV - Completado`);
-
-	console.log(`6 - Salvando JSONTV ${progPreferences.ficheroJSONTV}`);
-
-	let datosJSONTV = progPreferences.jsontv;
-	fs.writeFile(progPreferences.ficheroJSONTV, JSON.stringify(datosJSONTV, null, 2), function (error) {
-		if (error) {
-			progPreferences.isConversionRunning = false;
-			console.log(`6 - Salvando JSONTV ${progPreferences.ficheroJSONTV} - Fallido`);
-			reject(error);
-		} else {
-			console.log(`6 - Salvando JSONTV ${progPreferences.ficheroJSONTV} - Completado`);
-
-			// Convierto los datos en formato JSONTV a XMLTV
-			console.log(`7 - Convirtiendo JSONTV a XMLTV`);
-			let datosXMLTV = Utils.convierteJSONTVaXMLTV(datosJSONTV);
-			
-			console.log(`7 - Convirtiendo JSONTV a XMLTV - Completado`);
-
-			console.log(`8 - Salvando fichero XMLTV ${progPreferences.ficheroXMLTV}`);
-			fs.writeFile(progPreferences.ficheroXMLTV, datosXMLTV, function (error) {
-				if (error) {
-					progPreferences.isConversionRunning = false;
-					console.log(`8 - Salvando fichero XMLTV ${progPreferences.ficheroXMLTV} - Fallido`);
-					reject(error);
-				}
-				console.log(`8 - Salvando fichero XMLTV ${progPreferences.ficheroXMLTV} - Completado`);
-				console.log('');
-				console.log(`Hecho!! - ${progPreferences.numChannels} canales y ${progPreferences.numProgrammes} pases`);
-				progPreferences.isConversionRunning = false;
-			});
 		}
-	});
-	// Comprobar si la conversión ha finalizado
+		if (removeSelf)
+		fs.rmdirSync(dirPath);
+	};
+
+	// =========================================================
+	// Método principal
+	// =========================================================
+
+	function sessionController() {
+
+		let generaM3u = false;
+
+		// Paro mi propio timer, lo re-programaré más tarde
+		clearInterval(timerSessionController);
+
+		progPreferences.ficheroJsonINDEX = progPreferences.rutaFicheros + '/' + progPreferences.ficheroJsonINDEX;
+		progPreferences.ficheroJSON = progPreferences.rutaFicheros + '/' + progPreferences.ficheroJSON;
+		progPreferences.ficheroJSONTV = progPreferences.rutaFicheros + '/' + progPreferences.ficheroJSONTV;
+		//progPreferences.ficheroXMLTV = progPreferences.rutaFicheros + '/' + progPreferences.ficheroXMLTV;
+
+		rmDir(progPreferences.rutaFicheros, false);
+
+		// Genero array con los canales a descargar
+		let arrayCadenas = [];
+		progPreferences.cadenasHOME.map(cadena => {
+			if (cadena.elpais_epg) {
+				arrayCadenas.push(cadena.elpais_id)
+			}
+			if (cadena.tvh_m3u){
+				generaM3u = true;
+			}
+		});
+
+
+		// M3U cadenasHOME :
+		if (generaM3u){
+			creaFicheroM3U(progPreferences.cadenasHOME, progPreferences.cadenasHOME_din, progPreferences.ficheroM3U_HOME);
+		}
+
+		// XMLTV:
+		//
+		// Calculo cuando tendré que hacer la proxima solicitud
+		let ahora = new Date();
+		progPreferences.dias = Utils.validaDias(progPreferences.dias);
+		progPreferences.diasInicioFin = Utils.fechaInicioFin(progPreferences.dias);
+		progPreferences.nextRunDate = Utils.horaAleatoriaTomorrow(progPreferences.horaInicio, progPreferences.horaFin);
+		progPreferences.nextRunMilisegundos = progPreferences.nextRunDate - ahora;
+		if (progPreferences.nextRunMilisegundos < 0) {
+			progPreferences.nextRunMilisegundos += 86400000; // dentro de 24h si algo falla
+		}
+
+		// Inicio el proceso pidiendo el EPG a elpais
+		console.log('--');
+		console.log(`Inicio del ciclo de consulta del EPG`);
+		console.log('---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ');
+		if (progPreferences.developerMode === false) {
+			console.log(`1 - Descargando el EPG en formato JSON desde El País`);
+			console.log(`  => PORT ${progPreferences.urlelpais}`);
+			console.log(`  => EPG Descargando información para ${progPreferences.dias} días`);
+
+			let urls = [];
+			let files = [];
+
+			// Creo el array con la url y fichero de destino de los indices
+			for (let i = 0; i < progPreferences.dias; i++) {
+				urls.push(progPreferences.urlelpais + 'parrilla_' + Utils.nextDay(i) + '.json');
+				files.push(progPreferences.ficheroJsonINDEX + Utils.nextDay(i) + '.json');
+			}
+
+			// Creo el array con la url y fichero de destino de los canales
+			for (let i = 0; i < arrayCadenas.length; i++) {
+
+				urls.push(progPreferences.urlprogramas + arrayCadenas[i] + '.json');
+				files.push(progPreferences.ficheroJsonINDEX + arrayCadenas[i] + '.json');
+			}
+
+			const promises = urls.map(url => rp(url));
+			Promise.all(promises)
+			.then((data) => {
+
+				var promises = [];
+				for (let i = 0; i < data.length; i++) {
+					promises.push(Promise.resolve(
+					new Promise(function(resolve, reject) {
+						fs.writeFile(files[i], data[i], function(error){
+							if (error) {
+								console.log(`    => Error escribiendo el fichero ${files[i]}`);
+								reject(error);
+							}
+							else {
+								console.log(`    => El fichero ${files[i]} se ha salvado correctamente`);
+								resolve();
+							}
+						});
+					}
+					)));
+				}
+				Promise.all(promises).then(function() {
+					conversionCompletaDeEPGaXMLTV();
+				});
+			});
+		} else {
+			conversionCompletaDeEPGaXMLTV();
+		}
+	}
+
+	// Postprocesa los datos descargados
+	function conversionCompletaDeEPGaXMLTV() {
+		progPreferences.isConversionRunning = true;
+		console.log(`1 - Descargando el EPG en formato JSON desde El País - Completado`);
+
+		// Convierto los datos del indice y los detalles de los programas en formato JSON (El Pais) a un único fichero JSON (xmltv)
+		console.log(`2 - Convierte JSON (El País) a JSONTV`);
+		//let datosJSONTV = Utils.convierteJSONaJSONTV(progPreferences, ficheroJsonINDEX);
+		Utils.convierteJSONaJSONTV(progPreferences);
+		console.log(`4 - Salvando JSON unificado de El País ${progPreferences.ficheroJSON} - Completado`);
+		console.log(`5 - Convirtiendo JSON (El Pais) a JSONTV - Completado`);
+
+		console.log(`6 - Salvando JSONTV ${progPreferences.ficheroJSONTV}`);
+
+		let datosJSONTV = progPreferences.jsontv;
+		fs.writeFile(progPreferences.ficheroJSONTV, JSON.stringify(datosJSONTV, null, 2), function (error) {
+			if (error) {
+				progPreferences.isConversionRunning = false;
+				console.log(`6 - Salvando JSONTV ${progPreferences.ficheroJSONTV} - Fallido`);
+				reject(error);
+			} else {
+				console.log(`6 - Salvando JSONTV ${progPreferences.ficheroJSONTV} - Completado`);
+
+				// Convierto los datos en formato JSONTV a XMLTV
+				console.log(`7 - Convirtiendo JSONTV a XMLTV`);
+				let datosXMLTV = Utils.convierteJSONTVaXMLTV(datosJSONTV);
+
+				console.log(`7 - Convirtiendo JSONTV a XMLTV - Completado`);
+
+				console.log(`8 - Salvando fichero XMLTV ${progPreferences.ficheroXMLTV}`);
+				fs.writeFile(progPreferences.ficheroXMLTV, datosXMLTV, function (error) {
+					if (error) {
+						progPreferences.isConversionRunning = false;
+						console.log(`8 - Salvando fichero XMLTV ${progPreferences.ficheroXMLTV} - Fallido`);
+						reject(error);
+					}
+					console.log(`8 - Salvando fichero XMLTV ${progPreferences.ficheroXMLTV} - Completado`);
+					console.log('');
+					console.log(`Hecho!! - ${progPreferences.numChannels} canales y ${progPreferences.numProgrammes} pases`);
+					progPreferences.isConversionRunning = false;
+				});
+			}
+		});
+		// Comprobar si la conversión ha finalizado
+		// Nota: Se ejecutará inmediatamente (10ms), es un truco
+		// para ejecutarlo la primera vez de forma rápida y que él
+		// se auto reprograme con el intervalo que desee.
+		timerConversion = setInterval(function () {
+			monitorConversion();
+		}, 10);
+
+	}
+
+	// =========================================================
+	// Monitoriza si la conversión ha finalizado
+	// =========================================================
+	function monitorConversion() {
+		// Nada más entrar limpio mi timer, lo activaré después
+		// si realmente me hace falta.
+		clearInterval(timerConversion);
+
+		// Verifico si sigue activa...
+		if (progPreferences.isConversionRunning === false) {
+			// Si la conversión termino (con error o correctamente)
+			// programo que el session controller se ejecute cuando
+			// le toca...
+			console.log(`Programo próxima descarga para el: ${JSON.stringify(progPreferences.nextRunDate.toString())} quedan ${Utils.convertirTiempo(progPreferences.nextRunMilisegundos)}`);
+			timerSessionController = setInterval(function () {
+				sessionController();
+			}, progPreferences.nextRunMilisegundos);
+		} else {
+			// log
+			// console.log(`Monitor: La conversión se está ejecutando`);
+			// Me auto-reprogramo para verificar dentro de 500ms.
+			timerConversion = setInterval(function () {
+				monitorConversion();
+			}, 500);
+		}
+	}
+
+	// =========================================================
+	// START...
+	// =========================================================
+
+	// Programo que se arranque el session controller
 	// Nota: Se ejecutará inmediatamente (10ms), es un truco
 	// para ejecutarlo la primera vez de forma rápida y que él
 	// se auto reprograme con el intervalo que desee.
-	timerConversion = setInterval(function () {
-		monitorConversion();
+	//
+	timerSessionController = setInterval(function () {
+		sessionController();
 	}, 10);
-
-}
-
-// =========================================================
-// Monitoriza si la conversión ha finalizado
-// =========================================================
-function monitorConversion() {
-	// Nada más entrar limpio mi timer, lo activaré después
-	// si realmente me hace falta.
-	clearInterval(timerConversion);
-
-	// Verifico si sigue activa...
-	if (progPreferences.isConversionRunning === false) {
-		// Si la conversión termino (con error o correctamente)
-		// programo que el session controller se ejecute cuando
-		// le toca...
-		console.log(`Programo próxima descarga para el: ${JSON.stringify(progPreferences.nextRunDate.toString())} quedan ${Utils.convertirTiempo(progPreferences.nextRunMilisegundos)}`);
-		timerSessionController = setInterval(function () {
-			sessionController();
-		}, progPreferences.nextRunMilisegundos);
-	} else {
-		// log
-		// console.log(`Monitor: La conversión se está ejecutando`);
-		// Me auto-reprogramo para verificar dentro de 500ms.
-		timerConversion = setInterval(function () {
-			monitorConversion();
-		}, 500);
-	}
-}
-
-// =========================================================
-// START...
-// =========================================================
-
-// Programo que se arranque el session controller
-// Nota: Se ejecutará inmediatamente (10ms), es un truco
-// para ejecutarlo la primera vez de forma rápida y que él
-// se auto reprograme con el intervalo que desee.
-//
-timerSessionController = setInterval(function () {
-	sessionController();
-}, 10);
 

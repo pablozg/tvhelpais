@@ -157,7 +157,7 @@ const utils = {
 						let elpais_id = progPreferences.indiceJSON[progPreferences.i].idCanal;
 						let index = progPreferences.cadenasHOME.findIndex(item => item.elpais_id === elpais_id);
 						if (index != -1 && progPreferences.cadenasHOME[index].elpais_epg == false) index = -1;
-						
+
 						// Compruebo que el canal se encuentra en la lista para ser procesado
 						if (index !== -1) {
 
@@ -319,7 +319,8 @@ const utils = {
 											if (expresionTemporada !== null) {
 												episodeNum = subtitulo + ' ' + expresionTemporada;
 											}else{
-												if (progPreferences.programasJSON[indexPrograma].year !== "") episodeNum = subtitulo + ' (' + progPreferences.programasJSON[indexPrograma].year + ')';
+												episodeNum = subtitulo;
+												if (progPreferences.programasJSON[indexPrograma].year !== "") episodeNum = episodeNum + ' (' + progPreferences.programasJSON[indexPrograma].year + ')';
 											}
 
 										}
@@ -488,8 +489,14 @@ const utils = {
 		switch (original) {
 			case 'Programa':
 			return "Social / Political issues / Economics";
+			case 'Deportes':
+			return "Sports";
 			case 'Seriado':
+			case 'Entretenimiento':
 			return "Show / Game show"
+			case 'Documental':
+			case 'Ocio-Cultura':
+			return "Education / Science / Factual topics";
 			default:
 			return "Social / Political issues / Economics";
 		}
