@@ -92,15 +92,14 @@ let progPreferences = {
 	// dos y las siete de la mañana. Si quieres afinar más, puedes poner el mismo
 	// valor a ambas variables pero te recomiendo dejarlo así, es una forma
 	// elegante de NO sobrecargar a los servidores de elpais.
-	horaInicio: 8,
-	horaFin: 10,
+	horaInicio: 9, //8
+	horaFin: 10, // 10
 
 	// Parámetros para hacer la solicitud a la Web de elpais:
 	//
-	// urlelpais: URI a donde haremos la petición POST.
-	// dias: número de días de EPG que vamos a solicitar. Nota: he configurado
-	//       hardcoded que el máximo aceptado sean 7 (para no cargar a los
-	//       servidores de elpais).
+	// urlelpais: URI a donde haremos la petición.
+	// dias: número de días de EPG que vamos a solicitar (Máximo 3)
+
 	urlelpais: 'https://programacion-tv.elpais.com/data/',
 	urlprogramas: 'https://programacion-tv.elpais.com/data/programas/',
 	urlimagenes: 'https://programacion-tv.elpais.com/',
@@ -218,7 +217,7 @@ function rmDir (dirPath, removeSelf) {
 		progPreferences.ficheroJSONTV = progPreferences.rutaFicheros + '/' + progPreferences.ficheroJSONTV;
 		//progPreferences.ficheroXMLTV = progPreferences.rutaFicheros + '/' + progPreferences.ficheroXMLTV;
 
-		rmDir(progPreferences.rutaFicheros, false);
+		if (!progPreferences.developerMode) rmDir(progPreferences.rutaFicheros, false);
 
 		// Genero array con los canales a descargar
 		let arrayCadenas = [];
@@ -245,6 +244,7 @@ function rmDir (dirPath, removeSelf) {
 		progPreferences.diasInicioFin = Utils.fechaInicioFin(progPreferences.dias);
 		progPreferences.nextRunDate = Utils.horaAleatoriaTomorrow(progPreferences.horaInicio, progPreferences.horaFin);
 		progPreferences.nextRunMilisegundos = progPreferences.nextRunDate - ahora;
+
 		if (progPreferences.nextRunMilisegundos < 0) {
 			progPreferences.nextRunMilisegundos += 86400000; // dentro de 24h si algo falla
 		}
@@ -274,7 +274,18 @@ function rmDir (dirPath, removeSelf) {
 				files.push(progPreferences.ficheroJsonINDEX + arrayCadenas[i] + '.json');
 			}
 
-			const promises = urls.map(url => rp(url));
+			//const promises = urls.map(url => rp(url));
+			const promises = urls.map(url => rp({
+				method: 'GET',
+				uri: url,
+				headers: {
+					'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36',
+					'Accept': 'application/json',
+					'Cache-Control': 'no-cache, no-store, must-revalidate, max-age=120',
+					'Age': '0',
+				'Connection': 'keep-alive'},
+				json: false
+			}));
 			Promise.all(promises)
 			.then((data) => {
 
@@ -307,18 +318,34 @@ function rmDir (dirPath, removeSelf) {
 	// Postprocesa los datos descargados
 	function conversionCompletaDeEPGaXMLTV() {
 		progPreferences.isConversionRunning = true;
+
 		console.log(`1 - Descargando el EPG en formato JSON desde El País - Completado`);
 
 		// Convierto los datos del indice y los detalles de los programas en formato JSON (El Pais) a un único fichero JSON (xmltv)
 		console.log(`2 - Convierte JSON (El País) a JSONTV`);
-		//let datosJSONTV = Utils.convierteJSONaJSONTV(progPreferences, ficheroJsonINDEX);
 		Utils.convierteJSONaJSONTV(progPreferences);
+
 		console.log(`4 - Salvando JSON unificado de El País ${progPreferences.ficheroJSON} - Completado`);
 		console.log(`5 - Convirtiendo JSON (El Pais) a JSONTV - Completado`);
 
 		console.log(`6 - Salvando JSONTV ${progPreferences.ficheroJSONTV}`);
 
 		let datosJSONTV = progPreferences.jsontv;
+
+		// Ordeno los canales y programas
+		//
+		//datosJSONTV.tv.channel.sort(function (a, b) {
+		//	return a.$.id.localeCompare(b.$.id);
+		//});
+		//
+
+		// Primero el listado de canales
+		datosJSONTV.tv.channel.sort((a, b) => a.$.id.localeCompare(b.$.id));
+
+		// Despues por canal y fecha
+		datosJSONTV.tv.programme.sort((a, b) => a.$.channel.localeCompare(b.$.channel) || a.$.start.localeCompare(b.$.start));
+
+
 		fs.writeFile(progPreferences.ficheroJSONTV, JSON.stringify(datosJSONTV, null, 2), function (error) {
 			if (error) {
 				progPreferences.isConversionRunning = false;
@@ -342,7 +369,7 @@ function rmDir (dirPath, removeSelf) {
 					}
 					console.log(`8 - Salvando fichero XMLTV ${progPreferences.ficheroXMLTV} - Completado`);
 					console.log('');
-					console.log(`Hecho!! - ${progPreferences.numChannels} canales y ${progPreferences.numProgrammes} pases`);
+					console.log(`Completado!! - ${progPreferences.numChannels} canales y ${progPreferences.numProgrammes} pases`);
 					progPreferences.isConversionRunning = false;
 				});
 			}
@@ -370,10 +397,10 @@ function rmDir (dirPath, removeSelf) {
 			// Si la conversión termino (con error o correctamente)
 			// programo que el session controller se ejecute cuando
 			// le toca...
-			console.log(`Programo próxima descarga para el: ${JSON.stringify(progPreferences.nextRunDate.toString())} quedan ${Utils.convertirTiempo(progPreferences.nextRunMilisegundos)}`);
-			timerSessionController = setInterval(function () {
-				sessionController();
-			}, progPreferences.nextRunMilisegundos);
+			//console.log(`Programo próxima descarga para el: ${JSON.stringify(progPreferences.nextRunDate.toString())} quedan ${Utils.convertirTiempo(progPreferences.nextRunMilisegundos)}`);
+			/*timerSessionController = setInterval(function () {
+			sessionController();
+			}, progPreferences.nextRunMilisegundos);*/
 		} else {
 			// log
 			// console.log(`Monitor: La conversión se está ejecutando`);

@@ -1,27 +1,18 @@
 //
-// LuisPa 2017/01/06
+// Pablozg, LuisPa 2017/01/06
 //
 // Aquí configuro todos los canales de TV que quiero tener disponibles en los
 // dispositivos que van por la red casera (LAN/Ethernet), por lo que voy a
 // configurar las versiones Canales HD de lo mismos (excepto aquellos que solo emiten en SD).
-//
-// DISCLAIMER: Seguro que faltarán algunos canales, bien porque no los
-// consumo, mi demarcación o somplemente no los tengo contratados,
-// edita este fichero a tu gusto
-//
-// URL's interesantes que he usado para investigar nombres los id's
-//  http://www.elpaisplus.es/diales/
-//  http://www1.elpaisplus.es/canal/Hollywood/<elpais_id>  (para FRA EN = FRA%20EN)
-//  http://www.elpaisplus.es/recorte/m-NEO/canal/<elpais_id>.png
 //
 // Claves utilizadas. Indico cuales se usan para construir el fichero XMLTV
 // y cuales para crear los ficheros M3U que usaré para importación dinámica IPTV en Tvheadend
 //
 //   "elpais_epg": false,                    // Solicitar el EPG de esta cadena. [XMLTV]
 //   "elpais_fuente": "239.0.3.37:8208",    // Dirección streaming al crear el m3u para tvheadend. [M3U]
-//   "elpais_id": "TVG",                    // ID interno utilizado por elpais, necesario para pedir el EPG. [XMLTV]
-//   "elpais_nombre": "TV Galicia",         // Nombre del canal original que asigna elpais. [Informativo y control]
-//   "elpais_numero": "151",                // Número de canal original que asigna elpais. [M3U]
+//   "elpais_id": "TVG",                    // ID interno utilizado por Movistar, necesario para pedir el EPG. [XMLTV]
+//   "elpais_nombre": "TV Galicia",         // Nombre del canal original que asigna Movistar. [Informativo y control]
+//   "elpais_numero": "151",                // Número de canal original que asigna Movistar. [M3U]
 //   "tvh_id": "TVG.es",                      // ID interno que pondré en el fichero M3U para tvheadend. [M3U]
 //     Es el identificativo del Canal que usa Tvheadend al importar el fichero
 //     XMLTV y su valor DEBE ser compatible con lo que manda el DTD de xmltv:
@@ -45,24 +36,24 @@
 //      Este último campo verás que no lo uso pero lo he implementado porque estuve
 //      haciendo pruebas haciendo que un par de canales tirasen desde OTRO Tvheadend.
 //      Si tenemos este campo en la cadena entonces se usará a la hora de crear el M3U
-//      en vez de [uri_prefix]{elpais_fuente}
+//      en vez de [uri_prefix]{movistar_fuente}
 //
 const cadenasFavoritos = [
 {
 	"elpais_epg": false,
 	"elpais_fuente": "239.0.5.185:8208",
 	"elpais_id": "DESCONOCIDO1",
-	"elpais_nombre": "elpais+",
+	"elpais_nombre": "Movistar+",
 	"elpais_numero": "0",
-	"tvh_id": "elpais.es",
+	"tvh_id": "Movistar.es",
 	"tvh_m3u": false,
-	"tvh_nombre": "elpais+",
+	"tvh_nombre": "Movistar+",
 	"tvh_tag": "Canales HD|Favoritos"
 },
 {
-	"elpais_epg": false,
+	"elpais_epg": true,
 	"elpais_fuente": "239.123.123.192:58192",
-	"elpais_id": "TVE",
+	"elpais_id": "3",
 	"elpais_nombre": "LA 1",
 	"elpais_numero": "1",
 	"tvh_id": "TVE.es",
@@ -71,9 +62,9 @@ const cadenasFavoritos = [
 	"tvh_tag": "Canales HD|Favoritos"
 },
 {
-	"elpais_epg": false,
+	"elpais_epg": true,
 	"elpais_fuente": "239.123.123.162:58162",
-	"elpais_id": "LA2",
+	"elpais_id": "4",
 	"elpais_nombre": "LA 2",
 	"elpais_numero": "2",
 	"tvh_id": "LA2.es",
@@ -82,9 +73,9 @@ const cadenasFavoritos = [
 	"tvh_tag": "Favoritos"
 },
 {
-	"elpais_epg": false,
+	"elpais_epg": true,
 	"elpais_fuente": "239.123.123.145:58145",
-	"elpais_id": "A3",
+	"elpais_id": "2",
 	"elpais_nombre": "Antena 3",
 	"elpais_numero": "3",
 	"tvh_id": "A3.es",
@@ -93,9 +84,9 @@ const cadenasFavoritos = [
 	"tvh_tag": "Canales HD|Favoritos"
 },
 {
-	"elpais_epg": false,
+	"elpais_epg": true,
 	"elpais_fuente": "239.123.123.156:58156",
-	"elpais_id": "C4",
+	"elpais_id": "496",
 	"elpais_nombre": "Cuatro",
 	"elpais_numero": "4",
 	"tvh_id": "C4.es",
@@ -104,9 +95,9 @@ const cadenasFavoritos = [
 	"tvh_tag": "Canales HD|Favoritos"
 },
 {
-	"elpais_epg": false,
+	"elpais_epg": true,
 	"elpais_fuente": "239.123.123.155:58155",
-	"elpais_id": "T5",
+	"elpais_id": "1",
 	"elpais_nombre": "Telecinco",
 	"elpais_numero": "5",
 	"tvh_id": "T5.es",
@@ -115,9 +106,9 @@ const cadenasFavoritos = [
 	"tvh_tag": "Canales HD|Favoritos"
 },
 {
-	"elpais_epg": false,
+	"elpais_epg": true,
 	"elpais_fuente": "239.123.123.147:58147",
-	"elpais_id": "SEXTA",
+	"elpais_id": "510",
 	"elpais_nombre": "La Sexta",
 	"elpais_numero": "6",
 	"tvh_id": "SEXTA.es",
@@ -128,7 +119,7 @@ const cadenasFavoritos = [
 {
 	"elpais_epg": false,
 	"elpais_fuente": "239.0.5.187:8208",
-	"elpais_id": "MV3",
+	"elpais_id": "884",
 	"elpais_nombre": "#0",
 	"elpais_numero": "7",
 	"tvh_id": "MV3.es",
@@ -170,31 +161,31 @@ const cadenasFavoritos = [
 	"tvh_tag": "Canales HD|Favoritos"
 },
 {
-	"elpais_epg": false,
+	"elpais_epg": true,
 	"elpais_fuente": "239.0.5.250:8208",
-	"elpais_id": "CPSER",
-	"elpais_nombre": "elpais Series",
+	"elpais_id": "843",
+	"elpais_nombre": "Movistar Series",
 	"elpais_numero": "11",
 	"tvh_id": "CPSER.es",
 	"tvh_m3u": false,
-	"tvh_nombre": "elpais Series HD",
+	"tvh_nombre": "M. Series HD",
 	"tvh_tag": "Canales HD|Favoritos"
 },
 {
-	"elpais_epg": false,
+	"elpais_epg": true,
 	"elpais_fuente": "239.0.5.83:8208",
-	"elpais_id": "MV2",
-	"elpais_nombre": "elpais Series Xtra",
+	"elpais_id": "844",
+	"elpais_nombre": "Movistar Series Xtra",
 	"elpais_numero": "12",
 	"tvh_id": "MV2.es",
 	"tvh_m3u": false,
-	"tvh_nombre": "elpais Series Xtra HD",
+	"tvh_nombre": "M. SeriesXtraHD",
 	"tvh_tag": "Canales HD|Favoritos"
 },
 {
-	"elpais_epg": false,
+	"elpais_epg": true,
 	"elpais_fuente": "231.0.0.116:1234",
-	"elpais_id": "FOXGE",
+	"elpais_id": "202",
 	"elpais_nombre": "Fox",
 	"elpais_numero": "13",
 	"tvh_id": "FOXGE.es",
@@ -203,7 +194,7 @@ const cadenasFavoritos = [
 	"tvh_tag": "Favoritos"
 },
 {
-	"elpais_epg": false,
+	"elpais_epg": true,
 	"elpais_fuente": "231.0.0.108:1234",
 	"elpais_id": "63",
 	"elpais_nombre": "AXN",
@@ -214,9 +205,9 @@ const cadenasFavoritos = [
 	"tvh_tag": "Favoritos"
 },
 {
-	"elpais_epg": false,
+	"elpais_epg": true,
 	"elpais_fuente": "231.0.0.111:1234",
-	"elpais_id": "TNT",
+	"elpais_id": "577",
 	"elpais_nombre": "TNT",
 	"elpais_numero": "15",
 	"tvh_id": "TNT.es",
@@ -225,9 +216,9 @@ const cadenasFavoritos = [
 	"tvh_tag": ""
 },
 {
-	"elpais_epg": false,
+	"elpais_epg": true,
 	"elpais_fuente": "231.0.0.113:1234",
-	"elpais_id": "PCM",
+	"elpais_id": "493",
 	"elpais_nombre": "Comedy Central",
 	"elpais_numero": "16",
 	"tvh_id": "PCM.es",
@@ -236,9 +227,9 @@ const cadenasFavoritos = [
 	"tvh_tag": ""
 },
 {
-	"elpais_epg": false,
+	"elpais_epg": true,
 	"elpais_fuente": "231.0.0.107:1234",
-	"elpais_id": "CL13",
+	"elpais_id": "64",
 	"elpais_nombre": "Calle 13",
 	"elpais_numero": "17",
 	"tvh_id": "CL13.es",
@@ -247,9 +238,9 @@ const cadenasFavoritos = [
 	"tvh_tag": "Favoritos"
 },
 {
-	"elpais_epg": false,
+	"elpais_epg": true,
 	"elpais_fuente": "231.0.0.119:1234",
-	"elpais_id": "COSMO",
+	"elpais_id": "186",
 	"elpais_nombre": "COSMO",
 	"elpais_numero": "18",
 	"tvh_id": "COSMO.es",
@@ -258,9 +249,9 @@ const cadenasFavoritos = [
 	"tvh_tag": ""
 },
 {
-	"elpais_epg": false,
+	"elpais_epg": true,
 	"elpais_fuente": "239.0.9.132:8208",
-	"elpais_id": "AMC",
+	"elpais_id": "481",
 	"elpais_nombre": "AMC",
 	"elpais_numero": "19",
 	"tvh_id": "AMC.es",
@@ -269,9 +260,9 @@ const cadenasFavoritos = [
 	"tvh_tag": "Canales HD|Favoritos"
 },
 {
-	"elpais_epg": false,
+	"elpais_epg": true,
 	"elpais_fuente": "231.0.0.109:1234",
-	"elpais_id": "FOXCR",
+	"elpais_id": "660",
 	"elpais_nombre": "Fox Life",
 	"elpais_numero": "20",
 	"tvh_id": "FOXCR.es",
@@ -280,9 +271,9 @@ const cadenasFavoritos = [
 	"tvh_tag": "Favoritos"
 },
 {
-	"elpais_epg": false,
+	"elpais_epg": true,
 	"elpais_fuente": "239.0.5.79:8208",
-	"elpais_id": "SET",
+	"elpais_id": "512",
 	"elpais_nombre": "AXN White",
 	"elpais_numero": "21",
 	"tvh_id": "SET.es",
@@ -291,9 +282,9 @@ const cadenasFavoritos = [
 	"tvh_tag": "Canales HD|Favoritos"
 },
 {
-	"elpais_epg": false,
+	"elpais_epg": true,
 	"elpais_fuente": "231.0.0.120:1234",
-	"elpais_id": "SCI-FI",
+	"elpais_id": "520",
 	"elpais_nombre": "SYFY",
 	"elpais_numero": "22",
 	"tvh_id": "SCI-FI.es",
@@ -324,9 +315,9 @@ const cadenasFavoritos = [
 	"tvh_tag": "SD|Favoritos"
 },
 {
-	"elpais_epg": false,
+	"elpais_epg": true,
 	"elpais_fuente": "239.123.123.153:58153",
-	"elpais_id": "FDFIC",
+	"elpais_id": "506",
 	"elpais_nombre": "Factoría de Ficción",
 	"elpais_numero": "25",
 	"tvh_id": "FDFIC.es",
@@ -335,9 +326,9 @@ const cadenasFavoritos = [
 	"tvh_tag": ""
 },
 {
-	"elpais_epg": false,
+	"elpais_epg": true,
 	"elpais_fuente": "239.123.123.149:58149",
-	"elpais_id": "NEOX",
+	"elpais_id": "508",
 	"elpais_nombre": "Neox",
 	"elpais_numero": "26",
 	"tvh_id": "NEOX.es",
@@ -346,9 +337,9 @@ const cadenasFavoritos = [
 	"tvh_tag": ""
 },
 {
-	"elpais_epg": false,
+	"elpais_epg": true,
 	"elpais_fuente": "239.123.123.194:58194",
-	"elpais_id": "ATRESS",
+	"elpais_id": "883",
 	"elpais_nombre": "Atreseries",
 	"elpais_numero": "27",
 	"tvh_id": "ATRESS.es",
@@ -357,9 +348,9 @@ const cadenasFavoritos = [
 	"tvh_tag": "Canales HD"
 },
 {
-	"elpais_epg": false,
+	"elpais_epg": true,
 	"elpais_fuente": "239.123.123.166:58166",
-	"elpais_id": "ENERGY",
+	"elpais_id": "709",
 	"elpais_nombre": "Energy",
 	"elpais_numero": "28",
 	"tvh_id": "ENERGY.es",
@@ -379,75 +370,75 @@ const cadenasFavoritos = [
 	"tvh_tag": "SD|Favoritos"
 },
 {
-	"elpais_epg": false,
+	"elpais_epg": true,
 	"elpais_fuente": "239.0.5.111:8208",
-	"elpais_id": "MV1",
-	"elpais_nombre": "elpais Estrenos",
+	"elpais_id": "845",
+	"elpais_nombre": "Movistar Estrenos",
 	"elpais_numero": "31",
 	"tvh_id": "MV1.es",
 	"tvh_m3u": false,
-	"tvh_nombre": "elpais Estrenos HD",
+	"tvh_nombre": "M.EstrenosHD",
 	"tvh_tag": "Canales HD|Favoritos"
 },
 {
-	"elpais_epg": false,
+	"elpais_epg": true,
 	"elpais_fuente": "239.0.5.112:8208",
-	"elpais_id": "CPXTRA",
-	"elpais_nombre": "elpais Xtra",
+	"elpais_id": "846",
+	"elpais_nombre": "Movistar Xtra",
 	"elpais_numero": "32",
 	"tvh_id": "CPXTRA.es",
 	"tvh_m3u": false,
-	"tvh_nombre": "elpais Xtra HD",
+	"tvh_nombre": "M. Xtra HD",
 	"tvh_tag": "Canales HD|Favoritos"
 },
 {
-	"elpais_epg": false,
+	"elpais_epg": true,
 	"elpais_fuente": "239.0.5.113:8208",
-	"elpais_id": "CPACCI",
-	"elpais_nombre": "elpais Acción",
+	"elpais_id": "847",
+	"elpais_nombre": "Movistar Acción",
 	"elpais_numero": "33",
 	"tvh_id": "CPACCI.es",
 	"tvh_m3u": false,
-	"tvh_nombre": "elpais Acción HD",
+	"tvh_nombre": "M. ACCI©N HD",
 	"tvh_tag": "Canales HD|Favoritos"
 },
 {
-	"elpais_epg": false,
+	"elpais_epg": true,
 	"elpais_fuente": "239.0.5.114:8208",
-	"elpais_id": "CPCOME",
-	"elpais_nombre": "elpais Comedia",
+	"elpais_id": "848",
+	"elpais_nombre": "Movistar Comedia",
 	"elpais_numero": "34",
 	"tvh_id": "CPCOME.es",
 	"tvh_m3u": false,
-	"tvh_nombre": "elpais Comedia HD",
+	"tvh_nombre": "M. Comedia",
 	"tvh_tag": "Canales HD|Favoritos"
 },
 {
-	"elpais_epg": false,
+	"elpais_epg": true,
 	"elpais_fuente": "239.0.5.115:8208",
-	"elpais_id": "CPCOLE",
-	"elpais_nombre": "elpais DCine",
+	"elpais_id": "849",
+	"elpais_nombre": "Movistar DCine",
 	"elpais_numero": "35",
 	"tvh_id": "CPCOLE.es",
 	"tvh_m3u": false,
-	"tvh_nombre": "elpais DCine HD",
+	"tvh_nombre": "M. DCine HD",
 	"tvh_tag": "Canales HD|Favoritos"
 },
 {
 	"elpais_epg": false,
 	"elpais_fuente": "239.0.3.45:8208",
-	"elpais_id": "DCESP",
-	"elpais_nombre": "elpais Cine Español",
+	"elpais_id": "",
+	"elpais_nombre": "Movistar Cine Español",
 	"elpais_numero": "36",
 	"tvh_id": "DCESP.es",
 	"tvh_m3u": false,
-	"tvh_nombre": "elpais Cine Español HD",
+	"tvh_nombre": "Movistar Cine Español HD",
 	"tvh_tag": "Canales HD|Favoritos"
 },
 {
-	"elpais_epg": false,
+	"elpais_epg": true,
 	"elpais_fuente": "231.0.0.112:1234",
-	"elpais_id": "TCM",
+	"elpais_id": "59",
 	"elpais_nombre": "TCM",
 	"elpais_numero": "37",
 	"tvh_id": "TCM.es",
@@ -456,20 +447,20 @@ const cadenasFavoritos = [
 	"tvh_tag": ""
 },
 {
-	"elpais_epg": false,
+	"elpais_epg": true,
 	"elpais_fuente": "239.0.5.76:8208",
-	"elpais_id": "HOLLYW",
+	"elpais_id": "61",
 	"elpais_nombre": "Hollywood",
 	"elpais_numero": "38",
 	"tvh_id": "HOLLYW.es",
 	"tvh_m3u": false,
-	"tvh_nombre": "Hollywood HD",
+	"tvh_nombre": "HollywoodHD",
 	"tvh_tag": "Canales HD|Favoritos"
 },
 {
-	"elpais_epg": false,
+	"elpais_epg": true,
 	"elpais_fuente": "239.0.5.72:8208",
-	"elpais_id": "SUNDAN",
+	"elpais_id": "699",
 	"elpais_nombre": "Sundance",
 	"elpais_numero": "39",
 	"tvh_id": "SUNDAN.es",
@@ -511,9 +502,9 @@ const cadenasFavoritos = [
 	"tvh_tag": ""
 },
 {
-	"elpais_epg": false,
+	"elpais_epg": true,
 	"elpais_fuente": "239.123.123.158:58158",
-	"elpais_id": "PARCH",
+	"elpais_id": "716",
 	"elpais_nombre": "Paramount Channel",
 	"elpais_numero": "43",
 	"tvh_id": "PARCH.es",
@@ -537,24 +528,24 @@ const cadenasFavoritos = [
 	"elpais_epg": false,
 	"elpais_fuente": "239.0.6.14:8208",
 	"elpais_id": "CPFUT",
-	"elpais_nombre": "elpais Fútbol",
+	"elpais_nombre": "Movistar Fútbol",
 	"elpais_numero": "45",
 	"tvh_categoria": "Sports",
 	"tvh_id": "CPFUT.es",
 	"tvh_m3u": false,
-	"tvh_nombre": "elpais Fútbol HD",
+	"tvh_nombre": "Movistar Fútbol HD",
 	"tvh_tag": "Canales HD|Favoritos"
 },
 {
 	"elpais_epg": false,
 	"elpais_fuente": "239.0.5.84:8208",
 	"elpais_id": "CPPART",
-	"elpais_nombre": "elpais Partidazo",
+	"elpais_nombre": "Movistar Partidazo",
 	"elpais_numero": "46",
 	"tvh_categoria": "Sports",
 	"tvh_id": "CPPART.es",
 	"tvh_m3u": false,
-	"tvh_nombre": "elpais Partidazo HD",
+	"tvh_nombre": "Movistar Partidazo HD",
 	"tvh_tag": "Canales HD|Favoritos"
 },
 {
@@ -654,27 +645,27 @@ const cadenasFavoritos = [
 	"tvh_tag": "Canales HD|Favoritos"
 },
 {
-	"elpais_epg": false,
+	"elpais_epg": true,
 	"elpais_fuente": "239.0.5.248:8208",
-	"elpais_id": "CPDEP",
-	"elpais_nombre": "elpais Deportes 1",
+	"elpais_id": "377",
+	"elpais_nombre": "Movistar Deportes 1",
 	"elpais_numero": "55",
 	"tvh_categoria": "Sports",
 	"tvh_id": "CPDEP.es",
 	"tvh_m3u": false,
-	"tvh_nombre": "elpais Deportes 1 HD",
+	"tvh_nombre": "Movistar Deportes 1 HD",
 	"tvh_tag": "Canales HD|Favoritos"
 },
 {
-	"elpais_epg": false,
+	"elpais_epg": true,
 	"elpais_fuente": "239.0.5.245:8208",
-	"elpais_id": "CPD2",
-	"elpais_nombre": "elpais Deportes 2",
+	"elpais_id": "378",
+	"elpais_nombre": "Movistar Deportes 2",
 	"elpais_numero": "56",
 	"tvh_categoria": "Sports",
 	"tvh_id": "CPD2.es",
 	"tvh_m3u": false,
-	"tvh_nombre": "elpais Deportes 2 HD",
+	"tvh_nombre": "Movistar Deportes 2 HD",
 	"tvh_tag": "Canales HD|Favoritos"
 },
 {
@@ -686,7 +677,7 @@ const cadenasFavoritos = [
 	"tvh_categoria": "Sports",
 	"tvh_id": "MVF1.es",
 	"tvh_m3u": false,
-	"tvh_nombre": "Movistar Fórmula 1 HD",
+	"tvh_nombre": "M.Formula1HD",
 	"tvh_tag": "Canales HD|Favoritos"
 },
 {
@@ -698,25 +689,25 @@ const cadenasFavoritos = [
 	"tvh_categoria": "Sports",
 	"tvh_id": "MVMTGP.es",
 	"tvh_m3u": false,
-	"tvh_nombre": "Movistar Moto GP HD",
+	"tvh_nombre": "M.MotoGPHD",
 	"tvh_tag": "Canales HD|Favoritos"
 },
 {
 	"elpais_epg": false,
 	"elpais_fuente": "239.0.5.249:8208",
 	"elpais_id": "GOLF+",
-	"elpais_nombre": "elpais Golf",
+	"elpais_nombre": "Movistar Golf",
 	"elpais_numero": "59",
 	"tvh_categoria": "Sports",
 	"tvh_id": "GOLF.TV.es",
 	"tvh_m3u": false,
-	"tvh_nombre": "elpais Golf HD",
+	"tvh_nombre": "Movistar Golf HD",
 	"tvh_tag": "Canales HD|Favoritos"
 },
 {
-	"elpais_epg": false,
+	"elpais_epg": true,
 	"elpais_fuente": "231.0.0.106:1234",
-	"elpais_id": "ESP",
+	"elpais_id": "154",
 	"elpais_nombre": "Eurosport 1",
 	"elpais_numero": "60",
 	"tvh_categoria": "Sports",
@@ -726,9 +717,9 @@ const cadenasFavoritos = [
 	"tvh_tag": "Canales HD"
 },
 {
-	"elpais_epg": false,
+	"elpais_epg": true,
 	"elpais_fuente": "231.0.0.44:1234",
-	"elpais_id": "ESP2",
+	"elpais_id": "491",
 	"elpais_nombre": "Eurosport 2",
 	"elpais_numero": "61",
 	"tvh_categoria": "Sports",
@@ -809,9 +800,9 @@ const cadenasFavoritos = [
 	"tvh_tag": "Canales HD|Favoritos"
 },
 {
-	"elpais_epg": false,
+	"elpais_epg": true,
 	"elpais_fuente": "231.0.0.125:1234",
-	"elpais_id": "NATGEO",
+	"elpais_id": "151",
 	"elpais_nombre": "National Geographic",
 	"elpais_numero": "70",
 	"tvh_categoria": "Education / Science / Factual topics",
@@ -821,9 +812,9 @@ const cadenasFavoritos = [
 	"tvh_tag": "Favoritos"
 },
 {
-	"elpais_epg": false,
+	"elpais_epg": true,
 	"elpais_fuente": "231.0.0.118:1234",
-	"elpais_id": "NATGW",
+	"elpais_id": "784",
 	"elpais_nombre": "Nat Geo Wild",
 	"elpais_numero": "71",
 	"tvh_categoria": "Education / Science / Factual topics",
@@ -833,9 +824,9 @@ const cadenasFavoritos = [
 	"tvh_tag": "Favoritos"
 },
 {
-	"elpais_epg": false,
+	"elpais_epg": true,
 	"elpais_fuente": "239.0.0.19:8208",
-	"elpais_id": "HIST",
+	"elpais_id": "148",
 	"elpais_nombre": "Historia",
 	"elpais_numero": "72",
 	"tvh_categoria": "Education / Science / Factual topics",
@@ -845,9 +836,9 @@ const cadenasFavoritos = [
 	"tvh_tag": "SD|Favoritos"
 },
 {
-	"elpais_epg": false,
+	"elpais_epg": true,
 	"elpais_fuente": "231.0.0.127:1234",
-	"elpais_id": "DCR",
+	"elpais_id": "146",
 	"elpais_nombre": "Discovery",
 	"elpais_numero": "73",
 	"tvh_categoria": "Education / Science / Factual topics",
@@ -857,31 +848,32 @@ const cadenasFavoritos = [
 	"tvh_tag": "Favoritos"
 },
 {
-	"elpais_epg": false,
+	"elpais_epg": true,
 	"elpais_fuente": "239.0.5.82:8208",
-	"elpais_id": "ODISEA",
+	"elpais_id": "135",
 	"elpais_nombre": "Odisea",
 	"elpais_numero": "74",
 	"tvh_id": "ODISEA.es",
 	"tvh_m3u": false,
-	"tvh_nombre": "Odisea HD",
+	"tvh_nombre": "Canal Odisea",
 	"tvh_tag": "Canales HD|Favoritos"
 },
 {
-	"elpais_epg": false,
+	"elpais_epg": true,
 	"elpais_fuente": "239.0.0.38:8208",
-	"elpais_id": "BIOGRA",
-	"elpais_nombre": "A&E",
+	"elpais_id": "492",
+	//"elpais_nombre": "A&E",
+	"elpais_nombre": "BLAZE",
 	"elpais_numero": "75",
-	"tvh_id": "BIOGRA.es",
+	"tvh_id": "BLAZE.es",
 	"tvh_m3u": false,
-	"tvh_nombre": "A&E",
+	"tvh_nombre": "Blaze",
 	"tvh_tag": "SD|Favoritos"
 },
 {
-	"elpais_epg": false,
+	"elpais_epg": true,
 	"elpais_fuente": "231.0.0.115:1234",
-	"elpais_id": "VJR",
+	"elpais_id": "188",
 	"elpais_nombre": "Viajar",
 	"elpais_numero": "76",
 	"tvh_categoria": "Arts / Culture (without music)",
@@ -891,9 +883,9 @@ const cadenasFavoritos = [
 	"tvh_tag": ""
 },
 {
-	"elpais_epg": false,
+	"elpais_epg": true,
 	"elpais_fuente": "239.123.123.159:58159",
-	"elpais_id": "DCRMAX",
+	"elpais_id": "475",
 	"elpais_nombre": "Discovery Max",
 	"elpais_numero": "77",
 	"tvh_categoria": "Arts / Culture (without music)",
@@ -904,14 +896,14 @@ const cadenasFavoritos = [
 	"tvh_tag": "Favoritos"
 },
 {
-	"elpais_epg": false,
+	"elpais_epg": true,
 	"elpais_fuente": "239.0.0.57:8208",
-	"elpais_id": "CYM",
-	"elpais_nombre": "Crimen + Investigación",
+	"elpais_id": "691",
+	"elpais_nombre": "CRIMEN+INVES",
 	"elpais_numero": "78",
 	"tvh_id": "CYM.es",
 	"tvh_m3u": false,
-	"tvh_nombre": "Crimen & Investigación",
+	"tvh_nombre": "CRIMEN+INVES",
 	"tvh_tag": "SD|Favoritos"
 },
 {
@@ -926,9 +918,9 @@ const cadenasFavoritos = [
 	"tvh_tag": "SD|Favoritos"
 },
 {
-	"elpais_epg": false,
+	"elpais_epg": true,
 	"elpais_fuente": "239.0.0.27:8208",
-	"elpais_id": "CACOC",
+	"elpais_id": "183",
 	"elpais_nombre": "Canal Cocina",
 	"elpais_numero": "80",
 	"tvh_categoria": "Arts / Culture (without music)",
@@ -938,9 +930,9 @@ const cadenasFavoritos = [
 	"tvh_tag": "SD|Favoritos"
 },
 {
-	"elpais_epg": false,
+	"elpais_epg": true,
 	"elpais_fuente": "239.0.0.71:8208",
-	"elpais_id": "DECASA",
+	"elpais_id": "572",
 	"elpais_nombre": "Canal Decasa",
 	"elpais_numero": "81",
 	"tvh_id": "DECASA.es",
@@ -960,9 +952,9 @@ const cadenasFavoritos = [
 	"tvh_tag": ""
 },
 {
-	"elpais_epg": false,
+	"elpais_epg": true,
 	"elpais_fuente": "239.123.123.154:58154",
-	"elpais_id": "DIVINI",
+	"elpais_id": "697",
 	"elpais_nombre": "Divinity",
 	"elpais_numero": "83",
 	"tvh_id": "DIVINI.es",
@@ -971,9 +963,9 @@ const cadenasFavoritos = [
 	"tvh_tag": ""
 },
 {
-	"elpais_epg": false,
+	"elpais_epg": true,
 	"elpais_fuente": "239.123.123.150:58150",
-	"elpais_id": "NOVA",
+	"elpais_id": "509",
 	"elpais_nombre": "Nova",
 	"elpais_numero": "84",
 	"tvh_id": "NOVA.es",
@@ -982,14 +974,14 @@ const cadenasFavoritos = [
 	"tvh_tag": ""
 },
 {
-	"elpais_epg": false,
+	"elpais_epg": true,
 	"elpais_fuente": "239.0.3.31:8208",
-	"elpais_id": "MEGA",
+	"elpais_id": "841",
 	"elpais_nombre": "Mega",
 	"elpais_numero": "85",
 	"tvh_id": "MEGA.es",
 	"tvh_m3u": false,
-	"tvh_nombre": "Mega",
+	"tvh_nombre": "Mega HD",
 	"tvh_tag": "SD|Favoritos"
 },
 {
@@ -1026,9 +1018,9 @@ const cadenasFavoritos = [
 	"tvh_tag": "SD|Favoritos"
 },
 {
-	"elpais_epg": false,
+	"elpais_epg": true,
 	"elpais_fuente": "231.0.0.114:1234",
-	"elpais_id": "BABY",
+	"elpais_id": "573",
 	"elpais_nombre": "Baby TV",
 	"elpais_numero": "90",
 	"tvh_categoria": "Children's / Youth programs",
@@ -1038,21 +1030,21 @@ const cadenasFavoritos = [
 	"tvh_tag": "Dibujos"
 },
 {
-	"elpais_epg": false,
+	"elpais_epg": true,
 	"elpais_fuente": "231.0.0.??:1234",
-	"elpais_id": "PLAYDC",
+	"elpais_id": "292",
 	"elpais_nombre": "Disney Junior",
 	"elpais_numero": "91",
 	"tvh_categoria": "Children's / Youth programs",
 	"tvh_id": "PLAYDC.es",
 	"tvh_m3u": false,
-	"tvh_nombre": "Disney Junior",
+	"tvh_nombre": "DISNEY JR",
 	"tvh_tag": "Dibujos"
 },
 {
-	"elpais_epg": false,
+	"elpais_epg": true,
 	"elpais_fuente": "239.0.0.117:8208",
-	"elpais_id": "PANDA",
+	"elpais_id": "698",
 	"elpais_nombre": "Canal Panda",
 	"elpais_numero": "92",
 	"tvh_categoria": "Children's / Youth programs",
@@ -1062,9 +1054,9 @@ const cadenasFavoritos = [
 	"tvh_tag": "SD|Favoritos"
 },
 {
-	"elpais_epg": false,
+	"elpais_epg": true,
 	"elpais_fuente": "231.0.0.130:1234",
-	"elpais_id": "NICKJR",
+	"elpais_id": "687",
 	"elpais_nombre": "NICK JR",
 	"elpais_numero": "93",
 	"tvh_categoria": "Children's / Youth programs",
@@ -1074,9 +1066,9 @@ const cadenasFavoritos = [
 	"tvh_tag": "Dibujos"
 },
 {
-	"elpais_epg": false,
+	"elpais_epg": true,
 	"elpais_fuente": "231.0.0.131:1234",
-	"elpais_id": "NICK",
+	"elpais_id": "200",
 	"elpais_nombre": "Nickelodeon",
 	"elpais_numero": "94",
 	"tvh_categoria": "Children's / Youth programs",
@@ -1086,9 +1078,9 @@ const cadenasFavoritos = [
 	"tvh_tag": "Dibujos"
 },
 {
-	"elpais_epg": false,
+	"elpais_epg": true,
 	"elpais_fuente": "239.0.0.11:8208",
-	"elpais_id": "DCHXD",
+	"elpais_id": "174",
 	"elpais_nombre": "Disney XD",
 	"elpais_numero": "95",
 	"tvh_categoria": "Children's / Youth programs",
@@ -1098,9 +1090,9 @@ const cadenasFavoritos = [
 	"tvh_tag": "SD|Favoritos"
 },
 {
-	"elpais_epg": false,
+	"elpais_epg": true,
 	"elpais_fuente": "239.123.123.157:58157",
-	"elpais_id": "DCH",
+	"elpais_id": "175",
 	"elpais_nombre": "Disney Channel",
 	"elpais_numero": "96",
 	"tvh_categoria": "Children's / Youth programs",
@@ -1110,9 +1102,9 @@ const cadenasFavoritos = [
 	"tvh_tag": "Dibujos"
 },
 {
-	"elpais_epg": false,
+	"elpais_epg": true,
 	"elpais_fuente": "239.123.123.167:58167",
-	"elpais_id": "BOING",
+	"elpais_id": "665",
 	"elpais_nombre": "Boing",
 	"elpais_numero": "97",
 	"tvh_categoria": "Children's / Youth programs",
@@ -1122,9 +1114,9 @@ const cadenasFavoritos = [
 	"tvh_tag": "Dibujos"
 },
 {
-	"elpais_epg": false,
+	"elpais_epg": true,
 	"elpais_fuente": "239.123.123.164:58164",
-	"elpais_id": "CLANTV",
+	"elpais_id": "505",
 	"elpais_nombre": "Clan TVE",
 	"elpais_numero": "98",
 	"tvh_categoria": "Children's / Youth programs",
@@ -1517,12 +1509,12 @@ const cadenasFavoritos = [
 {
 	"elpais_epg": false,
 	"elpais_fuente": "239.120.5.251:8208",
-	"elpais_id": "MDISNE",
+	"elpais_id": "",
 	"elpais_nombre": "M. Disney",
 	"elpais_numero": "109",
 	"tvh_id": "MDISNE.es",
 	"tvh_m3u": false,
-	"tvh_nombre": "elpais Disney",
+	"tvh_nombre": "Movistar Disney",
 	"tvh_tag": "Dibujos"
 },
 {
@@ -1533,7 +1525,7 @@ const cadenasFavoritos = [
 	"elpais_numero": "62",
 	"tvh_id": "ESPORT.es",
 	"tvh_m3u": false,
-	"tvh_nombre": "elpais eSports",
+	"tvh_nombre": "Movistar eSports",
 	"tvh_tag": ""
 }
 ];

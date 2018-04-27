@@ -127,7 +127,21 @@ const utils = {
 			console.log(`  => Leyendo el indice con fecha ${utils.fechaUrl(dias)}`);
 
 			let buffer = null;
-			buffer = fs.readFileSync(ficheroJsonINDEX);
+			buffer = fs.readFileSync(ficheroJsonINDEX, "utf8"); // Usar para localizar el error en el parser
+			//buffer = fs.readFileSync(ficheroJsonINDEX);
+			/*buffer = buffer.replace(/\\n/g, "\\n")
+			.replace(/\\'/g, "\\'")
+			.replace(/\\"/g, '\\"')
+			.replace(/\\&/g, "\\&")
+			.replace(/\\r/g, "\\r")
+			.replace(/\\t/g, "\\t")
+			.replace(/\\b/g, "\\b")
+			.replace(/\\f/g, "\\f");
+
+			// remove non-printable and other non-valid JSON chars
+			buffer = buffer.replace(/[\u0000-\u0019]+/g,"");*/
+
+			buffer = buffer.replace(/INCLUDEPICTURE (.*?) MERGEFORMAT/g,''); // Evita error Producido por INCLUDEPICTURE \"s:\prgr_asi\imat\logo_sub2.bmp\" * MERGEFORMAT
 
 			if (buffer.length == 0) {
 				console.log(`  => Leyendo el indice con fecha ${utils.fechaUrl(dias)} - Fallido`);
@@ -200,6 +214,13 @@ const utils = {
 												"lang": langES
 											}
 										}
+										],
+										"icon": [
+										{
+											"$": {
+												"src": progPreferences.urlimagenes + 'imagenes/canales/' + elpais_id + '.jpg'
+											}
+										}
 										]
 									};
 									progPreferences.jsontv.tv.channel.push(channel);
@@ -234,19 +255,48 @@ const utils = {
 									// Convierto la Categoría a las soportadas por Tvheadend
 									let categoria = '';
 									let descripcion = '';
+									let episodeDescriptionChannel = '';
+									let descriptionChannel = '';
+
+									let episodeDescriptionIndex = progPreferences.indiceJSON[progPreferences.i].programas[progPreferences.j].description;
+									if (episodeDescriptionIndex === 'sin descripción') episodeDescriptionIndex = '';
+									if (episodeDescriptionIndex.length > 0) episodeDescriptionIndex = '[COLOR orange]Argumento: [/COLOR][CR]' + episodeDescriptionIndex;
+
+									categoria = utils.getCategoriaSection(progPreferences.indiceJSON[progPreferences.i].programas[progPreferences.j].idSection);
 
 									if (indexPrograma !== -1 ) {
-										categoria = utils.getCategoria(progPreferences.programasJSON[indexPrograma].txt_genre);
-										descripcion = progPreferences.programasJSON[indexPrograma].description;
+
+										episodeDescriptionChannel = progPreferences.programasJSON[indexPrograma].episode_description;
+										descriptionChannel = progPreferences.programasJSON[indexPrograma].description;
+										categoria = utils.getCategoriaByName(progPreferences.programasJSON[indexPrograma].txt_genre, progPreferences.programasJSON[indexPrograma].txt_subgenre);
+
+										if (episodeDescriptionChannel.includes(descriptionChannel) === false){
+
+											// Comparamos logitudes para descartar que sea el mismo texto
+											if (episodeDescriptionIndex.includes(descriptionChannel) === false){
+												episodeDescriptionIndex = episodeDescriptionIndex + '[CR][CR]' + descriptionChannel;
+											}
+										}
+
+										if (episodeDescriptionChannel.length > 0){
+											episodeDescriptionChannel = '[COLOR orange]Descripción : [/COLOR][CR]' + episodeDescriptionChannel;
+										}
 									}
+
+									if (episodeDescriptionChannel.includes(progPreferences.indiceJSON[progPreferences.i].programas[progPreferences.j].description) === false){
+										descripcion = episodeDescriptionIndex + '[CR][CR]' + episodeDescriptionChannel;
+									}else{
+										descripcion = episodeDescriptionChannel;
+									}
+
 
 									// Preparo el titulo
 
-									//let titulo = progPreferences.programasJSON[indexPrograma].title; mal ??
 									let titulo = progPreferences.indiceJSON[progPreferences.i].programas[progPreferences.j].title;
 
 									titulo = titulo.replace(/([\/\t]+(?=[\/\t])|^\s+|\s+$)/g, '')
 									//.replace(/;/g," : ")
+									//.replace(".",":")
 									//.replace(/-/g," - ")
 									.replace(/(\/(?=[a-zA-Z0-9]))/g, '$1 ')
 									.replace(/(\/(?![a-zA-Z0-9]))/g, ' $1')
@@ -275,11 +325,25 @@ const utils = {
 
 									let tituloClear = titulo;
 									let subtitulo = '';
+									let indexDosPuntosTitulo = titulo.indexOf(':');
+
+									let lastIndexDosPuntosTitulo = titulo.lastIndexOf(':');
+									if (lastIndexDosPuntosTitulo === -1 || titulo.lastIndexOf('.') > indexDosPuntosTitulo) lastIndexDosPuntosTitulo = titulo.lastIndexOf('.');
+									//if (lastIndexDosPuntosTitulo === -1) lastIndexDosPuntosTitulo = titulo.lastIndexOf('.');
+									if (lastIndexDosPuntosTitulo === titulo.length - 1) lastIndexDosPuntosTitulo = -1; // Validamos que el . no sea el final del titulo
+
+									/*if (indexPrograma !== -1 && progPreferences.programasJSON[indexPrograma].episode_title == '') {
 
 									// Buscamos la exitencia de ':'
-									let indexDosPuntosTitulo = titulo.indexOf(':');
 									if (indexDosPuntosTitulo === -1) indexDosPuntosTitulo = titulo.indexOf('-');
 									if (indexDosPuntosTitulo === -1) indexDosPuntosTitulo = titulo.length;
+
+									titulo = titulo.substr(0, indexDosPuntosTitulo);
+									}*/
+
+									// Buscamos la exitencia de '-'
+									if (indexDosPuntosTitulo === -1 && titulo.length > 6) indexDosPuntosTitulo = titulo.indexOf('-'); // Evita cortar títulos como 9-1-1
+									if (indexDosPuntosTitulo === -1 || lastIndexDosPuntosTitulo === indexDosPuntosTitulo) indexDosPuntosTitulo = titulo.length;
 
 									titulo = titulo.substr(0, indexDosPuntosTitulo);
 
@@ -307,11 +371,30 @@ const utils = {
 										season = parseInt(progPreferences.programasJSON[indexPrograma].season) - 1;
 										if (season === -1) season = ' ';
 
-										episode = parseInt(progPreferences.programasJSON[indexPrograma].episode) - 1;
+										if (progPreferences.programasJSON[indexPrograma].episode.startsWith(progPreferences.programasJSON[indexPrograma].season) &&
+										progPreferences.programasJSON[indexPrograma].episode.length >= 3){
+
+											episode = progPreferences.programasJSON[indexPrograma].episode.substr(progPreferences.programasJSON[indexPrograma].season.length, progPreferences.programasJSON[indexPrograma].episode.length);
+											episode = parseInt(episode) - 1;
+										}else{
+											episode = parseInt(progPreferences.programasJSON[indexPrograma].episode) - 1;
+										}
 										if (episode === -1) episode = ' ';
 
 										if (season !== ' ' || episode !== ' '){
 											episodeNum = season.toString() + " . " + episode.toString() + " . 0/1";
+											descripcion = '[/COLOR][CR][CR]' + descripcion;
+
+											if (episode !== ' ') {episode++; descripcion = 'Episodio ' + episode.toString() + descripcion;}
+											if (season !== ' ') {
+												season++;
+												if (episode !== ' '){
+													descripcion = '[COLOR green]Temporada ' + season.toString() + ' - ' + descripcion;
+												}else{
+													descripcion = '[COLOR green]Temporada ' + season.toString() + descripcion;
+												}
+											}
+
 										}else{
 											// Buscamos la temporada en formato (TXXXX)
 											let expresionTemporada = progPreferences.programasJSON[indexPrograma].title.match(/\([tT][0-9]\d*\)/g);
@@ -326,59 +409,6 @@ const utils = {
 										}
 									}else{
 										episodeNum = subtitulo;
-									}
-
-									// Categoría por TIPO DE CADENA (ver cadenas*.js)
-									if ( progPreferences.cadenasHOME[index].tvh_categoria ) {
-										categoria = progPreferences.cadenasHOME[index].tvh_categoria;
-									}
-
-									// "switch(true)" abominable que no funciona en otros lenguajes :-)
-									// http://stackoverflow.com/questions/2896626/switch-statement-for-string-matching-in-javascript
-									let str = titulo.toLowerCase();
-
-									switch (true) {
-
-										// Fútbol: partidos
-										case /laliga/.test(str):
-										if (subtitulo.toLowerCase() !== "laliga") {
-											titulo = "Fútbol: " + subtitulo;
-										}
-										categoria = "Football / Soccer";
-										break;
-
-										// Documentales
-										case /^dok xtra/.test(str):
-										categoria = "Social / Political issues / Economics";
-										break;
-
-										// Cine
-										case /corto/.test(str):
-										categoria = "Movie / Drama";
-										break;
-										case /cine/.test(str):
-										case /cine estreno/.test(str):
-										case /cine xtra/.test(str):
-										case /cine inédito/.test(str):
-										case /^cine : /.test(str):
-										if ( str === "cine" && subtitulo.toLowerCase() === "cine" && descripcion === "Emisión de una película." ) {
-											titulo = "Película"
-											subtitulo = "Emisión de una película."
-											categoria = "Movie / Drama";
-										} else {
-											if (subtitulo.toLowerCase() !== "cine") {
-												titulo = "Película: " + subtitulo;
-											}
-										}
-										categoria = "Movie / Drama";
-										break;
-										case /^cinexpress/.test(str):
-										case /^cinema-trix/.test(str):
-										case /^cine /.test(str):
-										categoria = "Movie / Drama";
-										break;
-										default:
-										break;
 									}
 
 									// --------------------------------------------------------------------------
@@ -453,6 +483,7 @@ const utils = {
 										];
 									}
 
+									// Sacamos la ruta de la imagen
 									if (indexPrograma !== -1 ) {
 										if (progPreferences.programasJSON[indexPrograma].image.length > 0){
 
@@ -464,6 +495,21 @@ const utils = {
 											}
 											];
 										}
+									}
+
+									// Sacamos la calificación por edades
+									if (indexPrograma !== -1 ) {
+
+										let edades = ['0','0','0','7','12','16','18'];
+
+										programme['rating'] = [
+										{
+											"value": edades[progPreferences.programasJSON[indexPrograma].id_parental],
+											"$": {
+												"system": "es"
+											}
+										}
+										];
 									}
 
 									// Añado el programa al buffer de salida
@@ -483,26 +529,314 @@ const utils = {
 	// definidas en el estándar DVB. Ver el fuente de tvheadend/src/epg.c
 	// https://github.com/tvheadend/tvheadend/blob/master/src/epg.c
 	// Además, solo tiene 10 configuradas. Este método mapea las que vienen
-	// de elpais a una de estas 10.
+	// de El Pais a una de estas 10.
 	//
-	getCategoria: function (original) {
-		switch (original) {
-			case 'Programa':
-			return "Social / Political issues / Economics";
-			case 'Deportes':
-			return "Sports";
-			case 'Seriado':
-			case 'Entretenimiento':
-			return "Show / Game show"
-			case 'Documental':
-			case 'Ocio-Cultura':
+
+	getCategoriaSection: function (section) {
+
+		section = parseInt(section);
+
+		switch (section) {
+
+			case 2: // Otros
 			return "Education / Science / Factual topics";
+
+			case 3: // Informativos
+			return "News Magazine";
+
+			case 4:
+			return "Sports";
+
+			case 6: // Series
+			return "Show / Game show"
+
+			case 7: // Peliculas
+			return "Film / Cinema";
+
+			case 8: // Infantil
+			return "Children's / Youth programs";
+
 			default:
 			return "Social / Political issues / Economics";
 		}
-		return original;
 	},
 
+	getCategoriaByName: function (genre, subgenre) {
+
+		if (/Otros/.test(subgenre) && !/Otros/.test(genre)){
+			switch (true) {
+
+				case /Cine/.test(genre):
+				case /Cortometraje/.test(genre):
+				return "Film / Cinema";
+
+				case /Deportes/.test(genre):
+				return "Sports";
+
+				case /Documental/.test(genre):
+				return "Documentary";
+
+				case /Entretenimiento/.test(genre):
+				case /Otros/.test(genre):
+				return "Variety show";
+
+				case /Infantil/.test(genre):
+				return "Children's / Youth programs";
+
+				case /Informativo/.test(genre):
+				return "News / Current affairs";
+
+				case /Música/.test(genre):
+				return "Music / Ballet / Dance";
+
+				case /Ocio-Cultura/.test(genre):
+				return "Leisure hobbies";
+
+				case /Serie/.test(genre):
+				return "Show / Game show";
+
+				default:
+				return "Social / Political issues / Economics";
+
+			}
+		}
+
+		switch (true) {
+
+			case /Película para adultos/.test(subgenre):
+			return "Adult movie / Drama";
+
+			case /Animación/.test(subgenre):
+			case /Dibujos animados/.test(subgenre):
+			return "Cartoons / Puppets";
+
+			case /Infantil/.test(subgenre):
+			return "Children's / Youth programs";
+
+			case /Humor/.test(subgenre):
+			case /Comedia/.test(subgenre):
+			return "Comedy";
+
+			case /Romántica/.test(subgenre):
+			case /Telenovela/.test(subgenre):
+			return "Romance";
+
+			case /Debate/.test(subgenre):
+			case /Debates/.test(subgenre):
+			case /Entrevista/.test(subgenre):
+			case /Entrevistas/.test(subgenre):
+			return "Discussion / Interview / Debate";
+
+			case /Biográfico/.test(subgenre):
+			case /Biográficos/.test(subgenre):
+			case /Documental/.test(subgenre):
+			case /Documentales/.test(subgenre):
+			case /Historia/.test(subgenre):
+			return "Documentary";
+
+			case /Viaje/.test(subgenre):
+			case /Viajes/.test(subgenre):
+			return "Tourism / Travel";
+
+			case /Gastronomía/.test(subgenre):
+			case /Cocina/.test(subgenre):
+			return "Cooking";
+
+			case /Cine/.test(subgenre):
+			case /Acción/.test(subgenre):
+			return "Film / Cinema";
+
+			case /Fitness/.test(subgenre):
+			case /Salud/.test(subgenre):
+			return "Fitness and health";
+
+			case /Ocio y Aficiones/.test(subgenre):
+			case /Hobbies/.test(subgenre):
+			return "Leisure hobbies";
+
+			case /Magazine/.test(subgenre):
+			case /Magazines/.test(subgenre):
+			case /Reportaje/.test(subgenre):
+			case /Reportajes/.test(subgenre):
+			case /Sociedad/.test(subgenre):
+			return "Magazines / Reports / Documentary";
+
+			case /Corto/.test(subgenre):
+			case /Cortometraje/.test(subgenre):
+			case /Drama/.test(subgenre):
+			case /Telefilme/.test(subgenre):
+			return "Movie / Drama";
+
+			case /Música/.test(subgenre):
+			case /Videoclips/.test(subgenre):
+			case /Concierto/.test(subgenre):
+			return "Music / Ballet / Dance";
+
+			case /Musical/.test(subgenre):
+			case /Musicales/.test(subgenre):
+			return "Musical / Opera";
+
+			case /Naturaleza/.test(subgenre):
+			case /Naturaleza y animales/.test(subgenre):
+			case /Caza y pesca/.test(subgenre):
+			return "Nature / Animals / Environment";
+
+			case /Actualidad/.test(subgenre):
+			case /Información/.test(subgenre):
+			case /Noticias/.test(subgenre):
+			case /Informativo/.test(subgenre):
+			case /Informativos/.test(subgenre):
+			case /Crónica Rosa/.test(subgenre):
+			case /Crónica/.test(subgenre):
+			return "News / Current affairs";
+
+			case /Especial/.test(subgenre):
+			return "News / Magazine";
+
+			case /Espectáculo/.test(subgenre):
+			return "Performing arts";
+
+			case /Toros/.test(subgenre):
+			return "Popular culture / Traditional arts";
+
+			case /Fantasía/.test(subgenre):
+			case /Fantásticas/.test(subgenre):
+			case /Ciencia Ficción/.test(subgenre):
+			case /Terror/.test(subgenre):
+			return "Science fiction / Fantasy / Horror";
+
+			case /Religion/.test(subgenre):
+			case /Religioso/.test(subgenre):
+			case /Histórica/.test(subgenre):
+			case /Histórico/.test(subgenre):
+			return "Serious / Classical / Religious / Historical movie / Drama";
+
+			case /Clásica/.test(subgenre):
+			return "Serious music / Classical music";
+
+			case /Programa/.test(subgenre):
+			case /Programas/.test(subgenre):
+			return "Show / Game show";
+
+			case /Serie/.test(subgenre):
+			case /Series/.test(subgenre):
+			return "Show / Game show";
+
+			case /Política/.test(subgenre):
+			return "Social / Political issues / Economics";
+
+			case /Evento especial/.test(subgenre):
+			case /Eventos especiales/.test(subgenre):
+			return "Special events (Olympic Games, World Cup, etc.)";
+
+			case /Ciclismo/.test(subgenre):
+			case /Baloncesto/.test(subgenre):
+			case /Billar/.test(subgenre):
+			case /Deporte/.test(subgenre):
+			case /Deportes/.test(subgenre):
+			case /Otros deportes/.test(subgenre):
+			case /Patinaje/.test(subgenre):
+			return "Sports";
+
+			case /Esquí/.test(subgenre):
+			case /Deportes de invierno/.test(subgenre):
+			return "Winter sports";
+
+			case /Automovilismo/.test(subgenre):
+			case /Motociclismo/.test(subgenre):
+			case /Motor/.test(subgenre):
+			return "Motor sport";
+
+			case /Hípica/.test(subgenre):
+			return "Equestrian";
+
+			case /Pelota \/ Frontón/.test(subgenre):
+			return "Tennis / Squash";
+
+			case /Lucha/.test(subgenre):
+			return "Martial sports";
+
+			case /Champions League/.test(subgenre):
+			case /Fútbol/.test(subgenre):
+			case /Fútbol Champions League/.test(subgenre):
+			return "Football / Soccer";
+
+			case /Idiomas/.test(subgenre):
+			return "Languages";
+
+			case /Ciencia y tecnología/.test(subgenre):
+			case /Científico/.test(subgenre):
+			return "Technology / Natural sciences";
+
+			case /Medicina/.test(subgenre):
+			case /Médicos/.test(subgenre):
+			return "Medicine / Physiology / Psychology";
+
+			case /Moda/.test(subgenre):
+			return "Fashion";
+
+			case /Concurso/.test(subgenre):
+			case /Concursos/.test(subgenre):
+			return "Game show / Quiz / Contest";
+
+			case /Entretenimiento/.test(subgenre):
+			case /Otros/.test(subgenre):
+			case /Reality Show/.test(subgenre):
+			case /Tele Realidad/.test(subgenre):
+			case /Zapping/.test(subgenre):
+			case /Variedades/.test(subgenre):
+			return "Variety show";
+
+			case /Cultural/.test(subgenre):
+			case /Educativo/.test(subgenre):
+			case /Decoración/.test(subgenre):
+			case /Educativo/.test(subgenre):
+			case /Bricolaje/.test(subgenre):
+			return "Informational / Educational / School programs";
+
+			case /Arte/.test(subgenre):
+			case /Cultura/.test(subgenre):
+			return "Arts / Culture (without music)";
+
+			case /Literatura/.test(subgenre):
+			return "Literature";
+
+			case /Aventuras/.test(subgenre):
+			case /Bélica/.test(subgenre):
+			case /Bélico/.test(subgenre):
+			case /Western/.test(subgenre):
+			return "Adventure / Western / War";
+
+			case /Economía/.test(subgenre):
+			return "Social / Political issues / Economics";
+
+			case /Policíaca/.test(subgenre):
+			case /Policíaco/.test(subgenre):
+			case /Thriller/.test(subgenre):
+			return 'Detective / Thriller'
+
+			case /Infantil (de 7 a 12)/.test(subgenre):
+			return "Entertainment programs for 6 to 14";
+
+			case /Preescolar (Menores de 7)/.test(subgenre):
+			return "Pre-school children's programs";
+
+			case /Talk-Show/.test(subgenre):
+			return "Talk show";
+
+			case /Tiempo/.test(subgenre):
+			return "News / Weather report";
+
+			case /Televenta/.test(subgenre):
+			return "Advertisement / Shopping";
+
+			case /Jardinería/.test(subgenre):
+			return "Gardening";
+
+			default:
+			return "Social / Political issues / Economics";
+		}
+	},
 
 	// Convierto de formato JSONTV a XMLTV
 	convierteJSONTVaXMLTV: function (datosJSONTV) {
