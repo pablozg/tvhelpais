@@ -142,7 +142,8 @@ const utils = {
 			buffer = buffer.replace(/[\u0000-\u0019]+/g,"");*/
 
 			buffer = buffer.replace(/INCLUDEPICTURE (.*?) MERGEFORMAT/g,''); // Evita error Producido por INCLUDEPICTURE \"s:\prgr_asi\imat\logo_sub2.bmp\" * MERGEFORMAT
-
+			buffer = buffer.replace(/CMND\:\\/g,'');
+			
 			if (buffer.length == 0) {
 				console.log(`  => Leyendo el indice con fecha ${utils.fechaUrl(dias)} - Fallido`);
 				return {};
@@ -177,7 +178,11 @@ const utils = {
 
 							// Leemos el fichero asociado al canal con los programas
 							let buffer = null;
-							buffer = fs.readFileSync(progPreferences.ficheroJsonINDEX + elpais_id + '.json');
+							//buffer = fs.readFileSync(progPreferences.ficheroJsonINDEX + elpais_id + '.json');
+							buffer = fs.readFileSync(progPreferences.ficheroJsonINDEX + elpais_id + '.json', "utf8"); // Usar para localizar el error en el parser
+							
+							buffer = buffer.replace(/INCLUDEPICTURE (.*?) MERGEFORMAT/g,''); // Evita error Producido por INCLUDEPICTURE \"s:\prgr_asi\imat\logo_sub2.bmp\" * MERGEFORMAT
+							buffer = buffer.replace(/CMND\:\\/g,'');
 
 							if (buffer.length == 0) {
 								console.log(`  => Leyendo la información del canal Nº ${elpais_id} - Fallido`);
@@ -344,6 +349,18 @@ const utils = {
 									// Buscamos la exitencia de '-'
 									if (indexDosPuntosTitulo === -1 && titulo.length > 6) indexDosPuntosTitulo = titulo.indexOf('-'); // Evita cortar títulos como 9-1-1
 									if (indexDosPuntosTitulo === -1 || lastIndexDosPuntosTitulo === indexDosPuntosTitulo) indexDosPuntosTitulo = titulo.length;
+
+									// Buscamos especificamente el titulo de 'Mundial de Fórmula 1'
+									let tempTitulo = titulo.normalize('NFD')
+									.replace(/([^n\u0300-\u036f]|n(?!\u0303(?![\u0300-\u036f])))[\u0300-\u036f]+/gi,"$1")
+									.normalize()
+									//.replace(/\W/g, ' ')
+									.replace(/\¿/g,"")
+									.replace(/\?/g,"")
+									.replace(/([\ \t]+(?=[\ \t])|^\s+|\s+$)/g, '')
+									.toLowerCase();
+
+									if (tempTitulo.indexOf('mundial de formula 1') !== -1) indexDosPuntosTitulo = 20;
 
 									titulo = titulo.substr(0, indexDosPuntosTitulo);
 

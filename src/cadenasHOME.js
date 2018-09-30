@@ -57,7 +57,7 @@ const cadenasFavoritos = [
 	"elpais_nombre": "LA 1",
 	"elpais_numero": "1",
 	"tvh_id": "TVE.es",
-	"tvh_m3u": false,
+	"tvh_m3u": true,
 	"tvh_nombre": "La 1 HD",
 	"tvh_tag": "Canales HD|Favoritos"
 },
@@ -68,7 +68,7 @@ const cadenasFavoritos = [
 	"elpais_nombre": "LA 2",
 	"elpais_numero": "2",
 	"tvh_id": "LA2.es",
-	"tvh_m3u": false,
+	"tvh_m3u": true,
 	"tvh_nombre": "La 2",
 	"tvh_tag": "Favoritos"
 },
@@ -79,7 +79,7 @@ const cadenasFavoritos = [
 	"elpais_nombre": "Antena 3",
 	"elpais_numero": "3",
 	"tvh_id": "A3.es",
-	"tvh_m3u": false,
+	"tvh_m3u": true,
 	"tvh_nombre": "Antena 3 HD",
 	"tvh_tag": "Canales HD|Favoritos"
 },
@@ -90,7 +90,7 @@ const cadenasFavoritos = [
 	"elpais_nombre": "Cuatro",
 	"elpais_numero": "4",
 	"tvh_id": "C4.es",
-	"tvh_m3u": false,
+	"tvh_m3u": true,
 	"tvh_nombre": "Cuatro HD",
 	"tvh_tag": "Canales HD|Favoritos"
 },
@@ -101,7 +101,7 @@ const cadenasFavoritos = [
 	"elpais_nombre": "Telecinco",
 	"elpais_numero": "5",
 	"tvh_id": "T5.es",
-	"tvh_m3u": false,
+	"tvh_m3u": true,
 	"tvh_nombre": "Telecinco HD",
 	"tvh_tag": "Canales HD|Favoritos"
 },
@@ -112,7 +112,7 @@ const cadenasFavoritos = [
 	"elpais_nombre": "La Sexta",
 	"elpais_numero": "6",
 	"tvh_id": "SEXTA.es",
-	"tvh_m3u": false,
+	"tvh_m3u": true,
 	"tvh_nombre": "La Sexta HD",
 	"tvh_tag": "Canales HD|Favoritos"
 },
@@ -172,7 +172,7 @@ const cadenasFavoritos = [
 	"tvh_tag": "Canales HD|Favoritos"
 },
 {
-	"elpais_epg": true,
+	"elpais_epg": false,
 	"elpais_fuente": "239.0.5.83:8208",
 	"elpais_id": "844",
 	"elpais_nombre": "Movistar Series Xtra",
@@ -189,7 +189,7 @@ const cadenasFavoritos = [
 	"elpais_nombre": "Fox",
 	"elpais_numero": "13",
 	"tvh_id": "FOXGE.es",
-	"tvh_m3u": false,
+	"tvh_m3u": true,
 	"tvh_nombre": "FOX",
 	"tvh_tag": "Favoritos"
 },
@@ -200,7 +200,7 @@ const cadenasFavoritos = [
 	"elpais_nombre": "AXN",
 	"elpais_numero": "14",
 	"tvh_id": "AXN.es",
-	"tvh_m3u": false,
+	"tvh_m3u": true,
 	"tvh_nombre": "AXN",
 	"tvh_tag": "Favoritos"
 },
@@ -211,7 +211,7 @@ const cadenasFavoritos = [
 	"elpais_nombre": "TNT",
 	"elpais_numero": "15",
 	"tvh_id": "TNT.es",
-	"tvh_m3u": false,
+	"tvh_m3u": true,
 	"tvh_nombre": "TNT",
 	"tvh_tag": ""
 },
@@ -222,7 +222,7 @@ const cadenasFavoritos = [
 	"elpais_nombre": "Comedy Central",
 	"elpais_numero": "16",
 	"tvh_id": "PCM.es",
-	"tvh_m3u": false,
+	"tvh_m3u": true,
 	"tvh_nombre": "Comedy Central",
 	"tvh_tag": ""
 },
@@ -233,7 +233,7 @@ const cadenasFavoritos = [
 	"elpais_nombre": "Calle 13",
 	"elpais_numero": "17",
 	"tvh_id": "CL13.es",
-	"tvh_m3u": false,
+	"tvh_m3u": true,
 	"tvh_nombre": "Calle 13",
 	"tvh_tag": "Favoritos"
 },
@@ -244,7 +244,7 @@ const cadenasFavoritos = [
 	"elpais_nombre": "COSMO",
 	"elpais_numero": "18",
 	"tvh_id": "COSMO.es",
-	"tvh_m3u": false,
+	"tvh_m3u": true,
 	"tvh_nombre": "COSMO",
 	"tvh_tag": ""
 },
@@ -266,7 +266,7 @@ const cadenasFavoritos = [
 	"elpais_nombre": "Fox Life",
 	"elpais_numero": "20",
 	"tvh_id": "FOXCR.es",
-	"tvh_m3u": false,
+	"tvh_m3u": true,
 	"tvh_nombre": "FOX life",
 	"tvh_tag": "Favoritos"
 },
@@ -288,7 +288,7 @@ const cadenasFavoritos = [
 	"elpais_nombre": "SYFY",
 	"elpais_numero": "22",
 	"tvh_id": "SCI-FI.es",
-	"tvh_m3u": false,
+	"tvh_m3u": true,
 	"tvh_nombre": "SyFy",
 	"tvh_tag": "Favoritos"
 },
@@ -321,7 +321,7 @@ const cadenasFavoritos = [
 	"elpais_nombre": "Factoría de Ficción",
 	"elpais_numero": "25",
 	"tvh_id": "FDFIC.es",
-	"tvh_m3u": false,
+	"tvh_m3u": true,
 	"tvh_nombre": "Factoría de Ficción",
 	"tvh_tag": ""
 },
@@ -332,7 +332,7 @@ const cadenasFavoritos = [
 	"elpais_nombre": "Neox",
 	"elpais_numero": "26",
 	"tvh_id": "NEOX.es",
-	"tvh_m3u": false,
+	"tvh_m3u": true,
 	"tvh_nombre": "Neox",
 	"tvh_tag": ""
 },
@@ -343,7 +343,7 @@ const cadenasFavoritos = [
 	"elpais_nombre": "Atreseries",
 	"elpais_numero": "27",
 	"tvh_id": "ATRESS.es",
-	"tvh_m3u": false,
+	"tvh_m3u": true,
 	"tvh_nombre": "Atreseries HD",
 	"tvh_tag": "Canales HD"
 },
@@ -354,7 +354,7 @@ const cadenasFavoritos = [
 	"elpais_nombre": "Energy",
 	"elpais_numero": "28",
 	"tvh_id": "ENERGY.es",
-	"tvh_m3u": false,
+	"tvh_m3u": true,
 	"tvh_nombre": "Energy",
 	"tvh_tag": ""
 },
@@ -384,11 +384,11 @@ const cadenasFavoritos = [
 	"elpais_epg": true,
 	"elpais_fuente": "239.0.5.112:8208",
 	"elpais_id": "846",
-	"elpais_nombre": "Movistar Xtra",
+	"elpais_nombre": "Movistar Cine Doc & Roll",
 	"elpais_numero": "32",
 	"tvh_id": "CPXTRA.es",
 	"tvh_m3u": false,
-	"tvh_nombre": "M. Xtra HD",
+	"tvh_nombre": "M.CineDoc&Roll",
 	"tvh_tag": "Canales HD|Favoritos"
 },
 {
@@ -442,7 +442,7 @@ const cadenasFavoritos = [
 	"elpais_nombre": "TCM",
 	"elpais_numero": "37",
 	"tvh_id": "TCM.es",
-	"tvh_m3u": false,
+	"tvh_m3u": true,
 	"tvh_nombre": "TCM",
 	"tvh_tag": ""
 },
@@ -497,7 +497,7 @@ const cadenasFavoritos = [
 	"elpais_nombre": "TEN",
 	"elpais_numero": "42",
 	"tvh_id": "TEN.es",
-	"tvh_m3u": false,
+	"tvh_m3u": true,
 	"tvh_nombre": "TEN",
 	"tvh_tag": ""
 },
@@ -508,7 +508,7 @@ const cadenasFavoritos = [
 	"elpais_nombre": "Paramount Channel",
 	"elpais_numero": "43",
 	"tvh_id": "PARCH.es",
-	"tvh_m3u": false,
+	"tvh_m3u": true,
 	"tvh_nombre": "Paramount Channel",
 	"tvh_tag": ""
 },
@@ -712,7 +712,7 @@ const cadenasFavoritos = [
 	"elpais_numero": "60",
 	"tvh_categoria": "Sports",
 	"tvh_id": "ESP.es",
-	"tvh_m3u": false,
+	"tvh_m3u": true,
 	"tvh_nombre": "Eurosport 1 HD",
 	"tvh_tag": "Canales HD"
 },
@@ -724,7 +724,7 @@ const cadenasFavoritos = [
 	"elpais_numero": "61",
 	"tvh_categoria": "Sports",
 	"tvh_id": "ESP2.es",
-	"tvh_m3u": false,
+	"tvh_m3u": true,
 	"tvh_nombre": "Eurosport 2",
 	"tvh_tag": ""
 },
@@ -807,7 +807,7 @@ const cadenasFavoritos = [
 	"elpais_numero": "70",
 	"tvh_categoria": "Education / Science / Factual topics",
 	"tvh_id": "NATGEO.es",
-	"tvh_m3u": false,
+	"tvh_m3u": true,
 	"tvh_nombre": "National Geographic",
 	"tvh_tag": "Favoritos"
 },
@@ -819,7 +819,7 @@ const cadenasFavoritos = [
 	"elpais_numero": "71",
 	"tvh_categoria": "Education / Science / Factual topics",
 	"tvh_id": "NATGW.es",
-	"tvh_m3u": false,
+	"tvh_m3u": true,
 	"tvh_nombre": "Nat Geo Wild",
 	"tvh_tag": "Favoritos"
 },
@@ -843,7 +843,7 @@ const cadenasFavoritos = [
 	"elpais_numero": "73",
 	"tvh_categoria": "Education / Science / Factual topics",
 	"tvh_id": "DCR.es",
-	"tvh_m3u": false,
+	"tvh_m3u": true,
 	"tvh_nombre": "Discovery Channel",
 	"tvh_tag": "Favoritos"
 },
@@ -878,7 +878,7 @@ const cadenasFavoritos = [
 	"elpais_numero": "76",
 	"tvh_categoria": "Arts / Culture (without music)",
 	"tvh_id": "VJR.es",
-	"tvh_m3u": false,
+	"tvh_m3u": true,
 	"tvh_nombre": "Viajar",
 	"tvh_tag": ""
 },
@@ -886,13 +886,13 @@ const cadenasFavoritos = [
 	"elpais_epg": true,
 	"elpais_fuente": "239.123.123.159:58159",
 	"elpais_id": "475",
-	"elpais_nombre": "Discovery Max",
+	"elpais_nombre": "DMax",
 	"elpais_numero": "77",
 	"tvh_categoria": "Arts / Culture (without music)",
 	"tvh_categoria": "Education / Science / Factual topics",
 	"tvh_id": "DCRMAX.es",
-	"tvh_m3u": false,
-	"tvh_nombre": "Discovery Max",
+	"tvh_m3u": true,
+	"tvh_nombre": "DMax",
 	"tvh_tag": "Favoritos"
 },
 {
@@ -947,7 +947,7 @@ const cadenasFavoritos = [
 	"elpais_nombre": "DKISS",
 	"elpais_numero": "82",
 	"tvh_id": "DKISS.es",
-	"tvh_m3u": false,
+	"tvh_m3u": true,
 	"tvh_nombre": "DKISS",
 	"tvh_tag": ""
 },
@@ -958,7 +958,7 @@ const cadenasFavoritos = [
 	"elpais_nombre": "Divinity",
 	"elpais_numero": "83",
 	"tvh_id": "DIVINI.es",
-	"tvh_m3u": false,
+	"tvh_m3u": true,
 	"tvh_nombre": "Divinity",
 	"tvh_tag": ""
 },
@@ -969,19 +969,19 @@ const cadenasFavoritos = [
 	"elpais_nombre": "Nova",
 	"elpais_numero": "84",
 	"tvh_id": "NOVA.es",
-	"tvh_m3u": false,
+	"tvh_m3u": true,
 	"tvh_nombre": "Nova",
 	"tvh_tag": ""
 },
 {
 	"elpais_epg": true,
-	"elpais_fuente": "239.0.3.31:8208",
+	"elpais_fuente": "239.123.123.225:58225",
 	"elpais_id": "841",
 	"elpais_nombre": "Mega",
 	"elpais_numero": "85",
 	"tvh_id": "MEGA.es",
-	"tvh_m3u": false,
-	"tvh_nombre": "Mega HD",
+	"tvh_m3u": true,
+	"tvh_nombre": "Mega SD",
 	"tvh_tag": "SD|Favoritos"
 },
 {
@@ -991,7 +991,7 @@ const cadenasFavoritos = [
 	"elpais_nombre": "BE MAD",
 	"elpais_numero": "86",
 	"tvh_id": "BEMAD.es",
-	"tvh_m3u": false,
+	"tvh_m3u": true,
 	"tvh_nombre": "BEMAD HD",
 	"tvh_tag": "Canales HD"
 },
@@ -1025,7 +1025,7 @@ const cadenasFavoritos = [
 	"elpais_numero": "90",
 	"tvh_categoria": "Children's / Youth programs",
 	"tvh_id": "BABY.es",
-	"tvh_m3u": false,
+	"tvh_m3u": true,
 	"tvh_nombre": "Baby TV",
 	"tvh_tag": "Dibujos"
 },
@@ -1061,7 +1061,7 @@ const cadenasFavoritos = [
 	"elpais_numero": "93",
 	"tvh_categoria": "Children's / Youth programs",
 	"tvh_id": "NICKJR.es",
-	"tvh_m3u": false,
+	"tvh_m3u": true,
 	"tvh_nombre": "Nick Jr",
 	"tvh_tag": "Dibujos"
 },
@@ -1073,7 +1073,7 @@ const cadenasFavoritos = [
 	"elpais_numero": "94",
 	"tvh_categoria": "Children's / Youth programs",
 	"tvh_id": "NICK.es",
-	"tvh_m3u": false,
+	"tvh_m3u": true,
 	"tvh_nombre": "Nickelodeon",
 	"tvh_tag": "Dibujos"
 },
@@ -1097,7 +1097,7 @@ const cadenasFavoritos = [
 	"elpais_numero": "96",
 	"tvh_categoria": "Children's / Youth programs",
 	"tvh_id": "DCH.es",
-	"tvh_m3u": false,
+	"tvh_m3u": true,
 	"tvh_nombre": "Disney Channel",
 	"tvh_tag": "Dibujos"
 },
@@ -1109,7 +1109,7 @@ const cadenasFavoritos = [
 	"elpais_numero": "97",
 	"tvh_categoria": "Children's / Youth programs",
 	"tvh_id": "BOING.es",
-	"tvh_m3u": false,
+	"tvh_m3u": true,
 	"tvh_nombre": "Boing",
 	"tvh_tag": "Dibujos"
 },
@@ -1121,7 +1121,7 @@ const cadenasFavoritos = [
 	"elpais_numero": "98",
 	"tvh_categoria": "Children's / Youth programs",
 	"tvh_id": "CLANTV.es",
-	"tvh_m3u": false,
+	"tvh_m3u": true,
 	"tvh_nombre": "Clan TVE",
 	"tvh_tag": "Dibujos"
 },
@@ -1526,6 +1526,17 @@ const cadenasFavoritos = [
 	"tvh_id": "ESPORT.es",
 	"tvh_m3u": false,
 	"tvh_nombre": "Movistar eSports",
+	"tvh_tag": ""
+},
+{
+	"elpais_epg": false,
+	"elpais_fuente": "231.0.0.140:1234",
+	"elpais_id": "APUNT",
+	"elpais_nombre": "A Punt",
+	"elpais_numero": "8",
+	"tvh_id": "APUNT.es",
+	"tvh_m3u": true,
+	"tvh_nombre": "A Punt",
 	"tvh_tag": ""
 }
 ];
