@@ -221,9 +221,11 @@ function rmDir (dirPath, removeSelf) {
 
 		// Genero array con los canales a descargar
 		let arrayCadenas = [];
+		let arrayNombreCadenas = [];
 		progPreferences.cadenasHOME.map(cadena => {
 			if (cadena.elpais_epg) {
-				arrayCadenas.push(cadena.elpais_id)
+				arrayCadenas.push(cadena.elpais_id);
+				arrayNombreCadenas.push(cadena.elpais_nombre);
 			}
 			if (cadena.tvh_m3u){
 				generaM3u = true;
@@ -256,15 +258,20 @@ function rmDir (dirPath, removeSelf) {
 		if (progPreferences.developerMode === false) {
 			console.log(`1 - Descargando el EPG en formato JSON desde El País`);
 			console.log(`  => PORT ${progPreferences.urlelpais}`);
-			console.log(`  => EPG Descargando información para ${progPreferences.dias} días`);
+			console.log(`  => EPG Descargando programación para ${progPreferences.dias} días`);
 
 			let urls = [];
 			let files = [];
 
 			// Creo el array con la url y fichero de destino de los indices
-			for (let i = 0; i < progPreferences.dias; i++) {
-				urls.push(progPreferences.urlelpais + 'parrilla_' + Utils.nextDay(i) + '.json');
-				files.push(progPreferences.ficheroJsonINDEX + Utils.nextDay(i) + '.json');
+			//for (let i = 0; i < progPreferences.dias; i++) {
+			for (let i = progPreferences.dias - 1; i >= 0; i--) {
+				let fecha = Utils.nextDay(i);
+				//urls.push(progPreferences.urlelpais + 'parrilla_' + fecha + '.json');
+				//files.push(progPreferences.ficheroJsonINDEX + fecha + '.json');
+				urls.unshift(progPreferences.urlelpais + 'parrilla_' + fecha + '.json');
+				files.unshift(progPreferences.ficheroJsonINDEX + fecha + '.json');
+				arrayNombreCadenas.unshift('Indice: ' + fecha);
 			}
 
 			// Creo el array con la url y fichero de destino de los canales
@@ -274,7 +281,6 @@ function rmDir (dirPath, removeSelf) {
 				files.push(progPreferences.ficheroJsonINDEX + arrayCadenas[i] + '.json');
 			}
 
-			//const promises = urls.map(url => rp(url));
 			const promises = urls.map(url => rp({
 				method: 'GET',
 				uri: url,
@@ -295,11 +301,11 @@ function rmDir (dirPath, removeSelf) {
 					new Promise(function(resolve, reject) {
 						fs.writeFile(files[i], data[i], function(error){
 							if (error) {
-								console.log(`    => Error escribiendo el fichero ${files[i]}`);
+								console.log(`    => Error escribiendo el fichero ${files[i]} (${arrayNombreCadenas[i]})`);
 								reject(error);
 							}
 							else {
-								console.log(`    => El fichero ${files[i]} se ha salvado correctamente`);
+								console.log(`    => El fichero ${files[i]} (${arrayNombreCadenas[i]}) se ha salvado correctamente`);
 								resolve();
 							}
 						});
@@ -393,19 +399,9 @@ function rmDir (dirPath, removeSelf) {
 		clearInterval(timerConversion);
 
 		// Verifico si sigue activa...
-		if (progPreferences.isConversionRunning === false) {
-			// Si la conversión termino (con error o correctamente)
-			// programo que el session controller se ejecute cuando
-			// le toca...
-			//console.log(`Programo próxima descarga para el: ${JSON.stringify(progPreferences.nextRunDate.toString())} quedan ${Utils.convertirTiempo(progPreferences.nextRunMilisegundos)}`);
-			/*timerSessionController = setInterval(function () {
-			sessionController();
-			}, progPreferences.nextRunMilisegundos);*/
-		} else {
-			// log
-			// console.log(`Monitor: La conversión se está ejecutando`);
+		if (progPreferences.isConversionRunning === true) {
 			// Me auto-reprogramo para verificar dentro de 500ms.
-			timerConversion = setInterval(function () {
+			timerConversion = setInterval(function() {
 				monitorConversion();
 			}, 500);
 		}

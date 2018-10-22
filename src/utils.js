@@ -113,7 +113,7 @@ const utils = {
 		progPreferences.jsontv = {
 			tv: {
 				"$": {
-					"generator-info-name": 'byLuisPa, modded by pablozg',
+					"generator-info-name": 'pablozg based on LuisPa\'s work',
 				},
 				channel: [],
 				programme: []
@@ -143,7 +143,7 @@ const utils = {
 
 			buffer = buffer.replace(/INCLUDEPICTURE (.*?) MERGEFORMAT/g,''); // Evita error Producido por INCLUDEPICTURE \"s:\prgr_asi\imat\logo_sub2.bmp\" * MERGEFORMAT
 			buffer = buffer.replace(/CMND\:\\/g,'');
-			
+
 			if (buffer.length == 0) {
 				console.log(`  => Leyendo el indice con fecha ${utils.fechaUrl(dias)} - Fallido`);
 				return {};
@@ -180,15 +180,15 @@ const utils = {
 							let buffer = null;
 							//buffer = fs.readFileSync(progPreferences.ficheroJsonINDEX + elpais_id + '.json');
 							buffer = fs.readFileSync(progPreferences.ficheroJsonINDEX + elpais_id + '.json', "utf8"); // Usar para localizar el error en el parser
-							
+
 							buffer = buffer.replace(/INCLUDEPICTURE (.*?) MERGEFORMAT/g,''); // Evita error Producido por INCLUDEPICTURE \"s:\prgr_asi\imat\logo_sub2.bmp\" * MERGEFORMAT
 							buffer = buffer.replace(/CMND\:\\/g,'');
 
 							if (buffer.length == 0) {
-								console.log(`  => Leyendo la información del canal Nº ${elpais_id} - Fallido`);
+								console.log(`  => Leyendo la información del canal ${progPreferences.cadenasHOME[index].elpais_nombre} (${elpais_id}) - Fallido`);
 								return{};
 							}else{
-								console.log(`  => Leyendo la información del canal Nº ${elpais_id} - Completado`);
+								console.log(`  => Leyendo la información del canal ${progPreferences.cadenasHOME[index].elpais_nombre} (${elpais_id}) - Completado`);
 								progPreferences.programasJSON = JSON.parse(buffer);
 
 								let channel_id = progPreferences.cadenasHOME[index].tvh_id;
@@ -246,7 +246,13 @@ const utils = {
 									let programmeStartDateObject = new Date(year, month - 1, day, hours, minutes, seconds, 0);
 
 									// Convierto la fecha para el campo 'date' : YYYYMMMDD
-									let programme_date = `${year}${month}${day}`;
+									let programme_date = '';
+									if (indexPrograma !== -1 && progPreferences.programasJSON[indexPrograma].year && progPreferences.programasJSON[indexPrograma].year  !== ""){
+										programme_date = progPreferences.programasJSON[indexPrograma].year;
+									}else{
+										programme_date = `${year}${month}${day}`;
+									}
+
 									// Convierto la hora para el campo 'start' : YYYYMMMDDHHMMSS00 ?TTTT
 									let programme_start = `${year}${month}${day}${hours}${minutes}${seconds} ${offset}`;
 
@@ -369,7 +375,7 @@ const utils = {
 										subtitulo = progPreferences.programasJSON[indexPrograma].episode_title;
 									}
 
-									if (subtitulo == ''){
+									if (subtitulo == '' || subtitulo === "xenérico"){
 
 										if (titulo.length < tituloClear.length){
 											subtitulo = tituloClear.substr(indexDosPuntosTitulo + 1, tituloClear.length).trim();
@@ -437,8 +443,8 @@ const utils = {
 									let programme = {
 										"$": {
 											"start": `${programme_start}`,
-											"channel": channel_id,
 											"stop": `${programme_stop}`,
+											"channel": channel_id
 										},
 										"title": [
 										{
@@ -512,6 +518,55 @@ const utils = {
 											}
 											];
 										}
+									}
+
+									// Añadimos pais de origen si existe
+									if (indexPrograma !== -1 ) {
+										if (progPreferences.programasJSON[indexPrograma].country.length > 0){
+
+											programme['country'] = [
+											{
+												"_" : progPreferences.programasJSON[indexPrograma].country
+											}
+											];
+										}
+									}
+
+									// Añadimos el reparto si existe, falta arreglar la forma de incluirlos
+									if (indexPrograma !== -1){
+										debugger;
+
+										let castItems = ["director","script","actors","producer","production","presented_by","photography","music","creator","guest_actors"];
+
+										let tempCredits = [];
+
+										// Creamos array con los roles existentes.
+										castItems.map(cast => {
+											if (progPreferences.programasJSON[indexPrograma][cast] && progPreferences.programasJSON[indexPrograma][cast] !== ""){
+												
+												let tempArray = progPreferences.programasJSON[indexPrograma][cast].split(',');
+												for (let i=0; i< tempArray.length; i++){
+													// Si no existe la categoria la creo
+
+													let credits = {}
+													if (tempArray[i]){
+														credits = {
+															"_": tempArray[i].trim()
+														};
+													}
+													
+													if (cast === "actors") cast = "actor";
+													if (cast === "presented_by") cast = "presenter";
+													if (cast === "music") cast = "composer";
+													if (cast === "guest_actors") cast = "guest";
+													
+													if (!programme['credits']) programme['credits'] = {};
+													if (!programme['credits'][cast]) programme['credits'][cast] = [];
+													programme['credits'][cast].push(credits);
+												}
+											}
+
+										});
 									}
 
 									// Sacamos la calificación por edades
